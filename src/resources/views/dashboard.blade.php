@@ -96,15 +96,20 @@
                                             <thead>
                                                 <tr>
                                                     <th>名前</th>
-                                                    <th>ステータス</th>
+                                                    <th>スコア</th>
                                                     <th>タスク名</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 <tr>
                                                     <td>ツボイシ</td>
-                                                    <td>進行中</td>
+                                                    <td>100</td>
                                                     <td>めっちゃやる</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>フタムラ</td>
+                                                    <td>30</td>
+                                                    <td>すんごいやる</td>
                                                 </tr>
                                             </tbody>
                                         </table>
