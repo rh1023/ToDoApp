@@ -7,5 +7,18 @@ use App\Models\Task;
 
 class TaskController extends Controller
 {
+    public function taskshow()
+    {
+        return view('tasklist');
+    }
+
+    public function create()
+    {
+        return view('taskadd');
+    }
+
+
+
+
 
 }

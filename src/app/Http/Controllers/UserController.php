@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-class CustomUserController extends Controller
+class UserController extends Controller
 {
     // 登録画面の表示
     public function index()

@@ -12,18 +12,22 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('tasks', function (Blueprint $table) {
+            //カラム追加
             $table->id();
             $table->string('user_id');
             $table->string('title');
             $table->string('category');
             $table->string('type');
-            $table->integer('important');
-            $table->string('status');
-            $table->date('deadline');
-            $table->string('repeat');
-            $table->integer('score');
-            $table->text('detail');
+            $table->integer('important')->default(1);
+            $table->string('status')->default('未着手');
+            $table->date('deadline')->nullable();
+            $table->string('repeat')->nullable();
+            $table->integer('score')->default(0);
+            $table->text('detail')->nullable();
+            $table->integer('completed_by')->nullable();
+            $table->timestamps();
             $table->softDeletes();
+
         });
     }
 
