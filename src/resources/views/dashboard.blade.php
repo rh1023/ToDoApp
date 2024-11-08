@@ -111,6 +111,16 @@
                                                     <td>30</td>
                                                     <td>すんごいやる</td>
                                                 </tr>
+                                                <tr>
+                                                    <td>ヤマダ</td>
+                                                    <td>10</td>
+                                                    <td>すんごいやる</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>フルカワ</td>
+                                                    <td>0</td>
+                                                    <td>すんごいやる</td>
+                                                </tr>
                                             </tbody>
                                         </table>
                                     </div>

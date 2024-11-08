@@ -25,6 +25,7 @@ Route::middleware('auth')->group(function () {
 
 //タスク一覧
 Route::get('/tasklist', [TaskController::class, 'taskshow'])->name('tasklist.taskshow');
+
 //タスク追加編集
 Route::get('/taskadd', [TaskController::class, 'create'])->name('taskadd.create');
 
