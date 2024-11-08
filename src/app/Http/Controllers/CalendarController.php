@@ -9,6 +9,10 @@ class CalendarController extends Controller
     //
     public function history()
     {
-        return view('calendar');
+        return view('historycalendar');
     }
+
+
+
+
 }

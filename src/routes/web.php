@@ -33,7 +33,7 @@ Route::get('/taskadd', [TaskController::class, 'create'])->name('taskadd.create'
 Route::get('/memberlist', [MemberController::class, 'mem_show'])->name('memberlist.mem_show');
 
 //カレンダー
-Route::get('/calendar', [CalendarController::class, 'history'])->name('calendar.history');
+Route::get('/historycalendar', [CalendarController::class, 'history'])->name('historycalendar.history');
 
 //追加機能：グループ
 Route::get('/groupmanagement', [GroupController::class, 'use_group'])->name('groupmanagement.use_group');
