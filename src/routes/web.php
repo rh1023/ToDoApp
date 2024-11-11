@@ -26,9 +26,18 @@ Route::middleware('auth')->group(function () {
 //タスク一覧画面
 Route::get('/tasklist', [TaskController::class, 'taskshow'])->name('tasklist.taskshow');
 
-//タスク追加編集
+//タスク追加
 Route::get('/taskadd', [TaskController::class, 'create'])->name('taskadd.create');
 Route::post('/taskadd', [TaskController::class, 'store'])->name('taskadd.store');
+
+//タスク編集
+Route::get('/taskedit', [TaskController::class, 'edit'])->name('taskedit.edit');
+Route::get('/taskedit/{task}', [TaskController::class, 'edit'])->name('taskedit.edit');
+Route::put('/taskedit/{task}', [TaskController::class, 'update'])->name('taskedit.update');
+Route::get('/taskedit/{id}', [TaskController::class, 'edit'])->name('taskedit.edit');
+
+//タスク削除
+Route::delete('/tasks/{task}', [TaskController::class, 'destroy'])->name('tasks.destroy');
 
 
 //メンバー状況

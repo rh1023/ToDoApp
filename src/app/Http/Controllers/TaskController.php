@@ -1,4 +1,9 @@
 <?php
+// 24.11.11
+// タスクの追加
+// タスクの更新
+// タスクの削除
+// の機能追加
 
 namespace App\Http\Controllers;
 
@@ -11,12 +16,13 @@ class TaskController extends Controller
     //タスク一覧画面
     public function taskshow()
     {
-        // return view('tasklist');
-        $tasks = Task::where('user_id', Auth::id())->get(); // ログインユーザーのタスクを取得
-        return view('tasklist', compact('tasks')); // tasklistビューにタスクを渡す
+        // ログインユーザーのタスクを取得
+        $tasks = Task::where('user_id', Auth::id())->get();
+        // tasklistビューにタスクを渡す
+        return view('tasklist', compact('tasks'));
     }
 
-    //タスク追加編集画面
+    //タスク追加画面
     public function create()
     {
         return view('taskadd');
@@ -25,9 +31,6 @@ class TaskController extends Controller
     //タスクの保存処理
     public function store(Request $request)
     {
-        //リクエストデータの確認
-        // dd($request->all());
-
         //バリデーション
         $request->validate(
             [
@@ -59,5 +62,51 @@ class TaskController extends Controller
 
         //リダイレクト
         return redirect()->route('tasklist.taskshow')->with('success', 'タスクが追加されました');
+    }
+
+    //タスク編集画面
+    public function edit($id)
+    {
+        $task = Task::findOrFail($id);
+        return view('taskedit', compact('task'));
+    }
+    //タスク更新
+    public function update(Request $request, $id)
+    {
+        $task = Task::findOrFail($id);
+
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'category' => 'required|string|max:255',
+            'important' => 'required|integer|min:1|max:5',
+            'deadline' => 'nullable|date',
+            'repeat' => 'nullable|string|max:255',
+            'detail' => 'nullable|string',
+            'status' => 'required|string|max:255',
+        ]);
+
+        $task->update([
+            'title' => $request->title,
+            'category' => $request->category,
+            'type' => $request->type,
+            'important' => $request->important,
+            'status' => $request->status,
+            'deadline' => $request->deadline,
+            'repeat' => $request->repeat,
+            'detail' => $request->detail
+        ]);
+
+        return redirect()->route('tasklist.taskshow')->with('success', 'タスクが更新されました');
+    }
+
+
+
+    //タスクの削除
+    public function destroy($id)
+    {
+        $task = Task::findOrFail($id);
+        $task->delete();
+
+        return redirect()->route('tasklist.taskshow')->with('success', 'タスクが削除されました');
     }
 }

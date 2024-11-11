@@ -1,5 +1,8 @@
 {{--
 24.11.07  14時半  Bootstrapを導入
+24.11.11
+データベースの情報を表示（スコアの自動計算の表示など未実装）
+登録時・更新時に自動計算で表示させる
 
 --}}
 
@@ -24,7 +27,6 @@
                     <form action="{{ route('taskadd.create') }}" method="GET">
                         <input type="submit" value="タスクの新規追加" class="btn btn-primary">
                     </form>
-
                     <div class="dropdown">
                         <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
                             並べ替え
@@ -43,34 +45,38 @@
                                 <tr>
                                     <th>ステータス</th>
                                     <th>タスク名</th>
+                                    <th>期日</th>
                                     <th>カテゴリ</th>
+                                    <th>種類</th>
                                     <th>重要度</th>
+                                    <th>スコア</th>
                                     <th>操作</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>進行中</td>
-                                    <td>めっちゃやる</td>
-                                    <td>仕事</td>
-                                    <td>5</td>
-                                    <td>
-                                        <button type="submit">編集</button>
-                                        <button type="submit">削除</button>
-                                        </form>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>未着手</td>
-                                    <td>むっちゃやる</td>
-                                    <td>趣味</td>
-                                    <td>3</td>
-                                    <td>
-                                        <button type="submit">編集</button>
-                                        <button type="submit">削除</button>
-                                        </form>
-                                    </td>
-                                </tr>
+                                @foreach ($tasks as $task)
+                                    <tr>
+                                        <td>{{ $task->status }}</td>
+                                        <td>{{ $task->title }}</td>
+                                        <td>{{ $task->deadline }}</td>
+                                        <td>{{ $task->category }}</td>
+                                        <td>{{ $task->type }}</td>
+                                        <td>{{ $task->important }}</td>
+                                        <td>スコア表示</td>
+                                        <td>
+                                            <a href="{{ route('taskedit.edit', ['id' => $task->id]) }}"
+                                                class="btn btn-primary btn-sm">編集</a>
+
+                                            <form action="{{ route('tasks.destroy', $task->id) }}" method="POST"
+                                                style="display:inline;">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-danger btn-sm"
+                                                    onclick="return confirm('本当に削除しますか？')">削除</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                @endforeach
                             </tbody>
                         </table>
                     </div>
