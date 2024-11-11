@@ -23,11 +23,13 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-//タスク一覧
+//タスク一覧画面
 Route::get('/tasklist', [TaskController::class, 'taskshow'])->name('tasklist.taskshow');
 
 //タスク追加編集
 Route::get('/taskadd', [TaskController::class, 'create'])->name('taskadd.create');
+Route::post('/taskadd', [TaskController::class, 'store'])->name('taskadd.store');
+
 
 //メンバー状況
 Route::get('/memberlist', [MemberController::class, 'mem_show'])->name('memberlist.mem_show');
