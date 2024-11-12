@@ -95,45 +95,6 @@
                             <input type="date" class="form-control" id="deadline" name="deadline">
                         </div>
 
-                        {{-- <div class="form-group">
-                            <label for="deadlien">期日</label>
-                            <div class="row">
-                                <div class="col-sm-4">
-                                    <div class="card">
-                                        <div class="card-body">
-                                            <h5 class="card-title">本日</h5>
-                                            <input type="date" class="form-control" id="date_input" name="date_input"
-                                                required>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="col-sm-4">
-                                    <div class="card">
-                                        <div class="card-body">
-                                            <h5 class="card-title">日付選択</h5>
-                                            <input type="date" class="form-control" id="date_input" name="date_input"
-                                                required>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="col-sm-4">
-                                    <div class="card">
-                                        <div class="card-body">
-                                            <h5 class="card-title">期間選択</h5>
-                                            <label for="start_date">開始日：</label>
-                                            <input type="date" id="start_date" name="start_date">
-                                            <br>
-                                            <label for="end_date">終了日：</label>
-                                            <input type="date" id="end_date" name="end_date">
-                                        </div>
-                                    </div>
-
-                                </div>
-                            </div>
-                        </div> --}}
-
                         <br>
 
                         <div class = "form-group">

@@ -118,6 +118,4 @@ class TaskController extends Controller
         return redirect()->route('tasklist.taskshow')->with('success', 'タスクが削除されました');
     }
 
-    //ソート
-
 }
