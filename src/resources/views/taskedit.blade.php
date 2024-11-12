@@ -1,6 +1,9 @@
 {{--
-2024.11.11  11:40  taskaddを複製し編集
+24.11.11  11:40  taskaddを複製し編集
 タスクの修正機能実装（編集前の値の保持）
+24.11.12
+繰り返し処理の設定を追加
+
 --}}
 
 <head>
@@ -49,15 +52,6 @@
                                     <div class="card-body">
                                         <div class ="form-group">
                                             <label for="category">カテゴリ</label>
-                                            {{-- <select class="form-control" id="category" name="category" required>
-                                                <option value="">選択してください</option>
-                                                <option value="家事">家事</option>
-                                                <option value="仕事">仕事</option>
-                                                <option value="健康">健康</option>
-                                                <option value="自己研鑽">自己研鑽</option>
-                                                <option value="趣味">趣味</option>
-                                                <option value="その他">その他</option>
-                                            </select> --}}
                                             <select class="form-control" id="category" name="category" required>
                                                 <option value="">選択してください</option>
                                                 <option value="家事" {{ $task->category == '家事' ? 'selected' : '' }}>
@@ -133,9 +127,32 @@
 
                         <div class = "form-group">
                             <label for = "repeat">繰り返し設定</label>
+                            <select class="form-control" id="repeat" name="repeat">
+                                <option value="">繰り返しなし</option>
+                                <option value="daily" {{ $task->repeat == 'daily' ? 'selected' : '' }}>毎日</option>
+                                <option value="weekly:1" {{ $task->repeat == 'weekly:1' ? 'selected' : '' }}>毎週月曜日</option>
+                                <option value="weekly:2" {{ $task->repeat == 'weekly:2' ? 'selected' : '' }}>毎週火曜日</option>
+                                <option value="weekly:3" {{ $task->repeat == 'weekly:3' ? 'selected' : '' }}>毎週水曜日</option>
+                                <option value="weekly:4" {{ $task->repeat == 'weekly:4' ? 'selected' : '' }}>毎週木曜日</option>
+                                <option value="weekly:5" {{ $task->repeat == 'weekly:5' ? 'selected' : '' }}>毎週金曜日</option>
+                                <option value="weekly:6" {{ $task->repeat == 'weekly:6' ? 'selected' : '' }}>毎週土曜日</option>
+                                <option value="weekly:0" {{ $task->repeat == 'weekly:0' ? 'selected' : '' }}>毎週日曜日</option>
+                                <option value="monthly:1week-1" {{ $task->repeat == 'monthly:1week-1' ? 'selected' : '' }}>毎月第1月曜日</option>
+                                <option value="monthly:2week-1" {{ $task->repeat == 'monthly:2week-1' ? 'selected' : '' }}>毎月第2月曜日</option>
+                                <option value="monthly:3week-1" {{ $task->repeat == 'monthly:3week-1' ? 'selected' : '' }}>毎月第3月曜日</option>
+                                <option value="monthly:4week-1" {{ $task->repeat == 'monthly:4week-1' ? 'selected' : '' }}>毎月第4月曜日</option>
+                                <option value="monthly:1" {{ $task->repeat == 'monthly:1' ? 'selected' : '' }}>毎月1日</option>
+                                <option value="monthly:15" {{ $task->repeat == 'monthly:15' ? 'selected' : '' }}>毎月15日</option>
+                            </select>
+                        </div>
+
+                        <br>
+
+                        {{-- <div class = "form-group">
+                            <label for = "repeat">繰り返し設定</label>
                             <input type = "text" class= "form-control" id="repeat" name="repeat"
                                 value="{{ $task->repeat }}">
-                        </div>
+                        </div> --}}
 
                         <div class="form-group">
                             <label for="detail">詳細</label>

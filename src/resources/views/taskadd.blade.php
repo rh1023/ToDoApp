@@ -4,6 +4,8 @@
 タスク追加機能を実装
 入力フォームの属性をメソッドで利用するフィールドにそろえる
 フォームactionを指定する
+24.11.12
+繰り返し処理の設定を追加
 --}}
 
 <head>
@@ -99,7 +101,23 @@
 
                         <div class = "form-group">
                             <label for = "repeat">繰り返し設定</label>
-                            <input type = "text" class= "form-control" id="repeat" name="repeat">
+                            <select class="form-control" id="repeat" name="repeat">
+                                <option value="">繰り返しなし</option>
+                                <option value="daily">毎日</option>
+                                <option value="weekly:1">毎週月曜日</option>
+                                <option value="weekly:2">毎週火曜日</option>
+                                <option value="weekly:3">毎週水曜日</option>
+                                <option value="weekly:4">毎週木曜日</option>
+                                <option value="weekly:5">毎週金曜日</option>
+                                <option value="weekly:6">毎週土曜日</option>
+                                <option value="weekly:0">毎週日曜日</option>
+                                <option value="monthly:1week-1">毎月第1月曜日</option>
+                                <option value="monthly:2week-1">毎月第2月曜日</option>
+                                <option value="monthly:3week-1">毎月第3月曜日</option>
+                                <option value="monthly:4week-1">毎月第4月曜日</option>
+                                <option value="monthly:1">毎月1日</option>
+                                <option value="monthly:15">毎月15日</option>
+                            </select>
                         </div>
 
                         <div class="form-group">

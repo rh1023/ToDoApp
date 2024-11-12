@@ -5,6 +5,8 @@
 登録時・更新時に自動計算で表示させる
 24.11.12
 並び替え機能の実装（sortablelink）
+繰り返し設定の項目を更新
+日付フォーマットを2024-11-12から2024年11月12日に変更
 
 --}}
 
@@ -49,7 +51,7 @@
                                     <tr>
                                         <td>{{ $task->status }}</td>
                                         <td>{{ $task->title }}</td>
-                                        <td>{{ $task->deadline }}</td>
+                                        <td>{{ $task->formatted_deadline }}</td>
                                         <td>{{ $task->category }}</td>
                                         <td>{{ $task->type }}</td>
                                         <td>{{ $task->important }}</td>

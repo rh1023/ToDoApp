@@ -6,12 +6,15 @@
 // の機能追加
 // 24.11.12
 // タスクの並び替え機能（sortable)
+//タスクの繰り返し処理を実装
+//日付フォーマットを2024-11-12から2024年11月12日に変更
 
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Models\Task;
+use Carbon\Carbon;
 
 class TaskController extends Controller
 {
@@ -20,8 +23,14 @@ class TaskController extends Controller
     {
         // ログインユーザーのタスクを取得
         $tasks = Task::where('user_id', Auth::id())
-        ->sortable()
-        ->get();
+            ->sortable()
+            ->get();
+
+        // 日付フォーマットの設定
+        foreach ($tasks as $task) {
+            $task->formatted_deadline = Carbon::parse($task->deadline)->format('Y年n月j日');
+        }
+
         // tasklistビューにタスクを渡す
         return view('tasklist', compact('tasks'));
     }
@@ -118,4 +127,30 @@ class TaskController extends Controller
         return redirect()->route('tasklist.taskshow')->with('success', 'タスクが削除されました');
     }
 
+    //タスクの繰り返し
+    private function parseRepeatData($repeatString)
+    {
+        if (empty($repeatString)) {
+            return null;
+        }
+
+        $parts = explode(':', $repeatString);
+        $type = $parts[0];
+
+        switch ($type) {
+            case 'daily':
+                return ['type' => 'daily'];
+            case 'weekly':
+                return ['type' => 'weekly', 'day' => (int)$parts[1]];
+            case 'monthly':
+                if (strpos($parts[1], 'week') !== false) {
+                    $weekParts = explode('-', $parts[1]);
+                    return ['type' => 'monthly', 'week' => (int)$weekParts[0], 'weekday' => (int)$weekParts[1]];
+                } else {
+                    return ['type' => 'monthly', 'date' => (int)$parts[1]];
+                }
+            default:
+                return null;
+        }
+    }
 }
