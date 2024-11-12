@@ -6,7 +6,9 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "akaunting/laravel-sortable": "^1.0",
         "askedio/laravel-soft-cascade": "^11.0",
+        "kyslik/column-sortable": "^6.6",
         "laravel/framework": "^11.9",
         "laravel/scout": "^10.11",
         "laravel/tinker": "^2.9",

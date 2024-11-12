@@ -4,6 +4,8 @@
 // タスクの更新
 // タスクの削除
 // の機能追加
+// 24.11.12
+// タスクの並び替え機能（sortable)
 
 namespace App\Http\Controllers;
 
@@ -17,7 +19,9 @@ class TaskController extends Controller
     public function taskshow()
     {
         // ログインユーザーのタスクを取得
-        $tasks = Task::where('user_id', Auth::id())->get();
+        $tasks = Task::where('user_id', Auth::id())
+        ->sortable()
+        ->get();
         // tasklistビューにタスクを渡す
         return view('tasklist', compact('tasks'));
     }
@@ -45,7 +49,7 @@ class TaskController extends Controller
         );
 
         //タスクの作成
-        Task::create(
+        $task = Task::create(
             [
                 'user_id' => Auth::id(),
                 'title' => $request->title,
@@ -59,6 +63,9 @@ class TaskController extends Controller
                 'detail' => $request->detail
             ]
         );
+
+        $task->score = $task->calculateScore();
+        $task->save();
 
         //リダイレクト
         return redirect()->route('tasklist.taskshow')->with('success', 'タスクが追加されました');
@@ -96,10 +103,11 @@ class TaskController extends Controller
             'detail' => $request->detail
         ]);
 
+        $task->score = $task->calculateScore();
+        $task->save();
+
         return redirect()->route('tasklist.taskshow')->with('success', 'タスクが更新されました');
     }
-
-
 
     //タスクの削除
     public function destroy($id)
@@ -109,4 +117,7 @@ class TaskController extends Controller
 
         return redirect()->route('tasklist.taskshow')->with('success', 'タスクが削除されました');
     }
+
+    //ソート
+
 }

@@ -3,6 +3,8 @@
 24.11.11
 データベースの情報を表示（スコアの自動計算の表示など未実装）
 登録時・更新時に自動計算で表示させる
+24.11.12
+並び替え機能の実装（sortablelink）
 
 --}}
 
@@ -27,29 +29,18 @@
                     <form action="{{ route('taskadd.create') }}" method="GET">
                         <input type="submit" value="タスクの新規追加" class="btn btn-primary">
                     </form>
-                    <div class="dropdown">
-                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                            並べ替え
-                        </button>
-                        <div class="dropdown-menu">
-                            <a class="dropdown-item" href="#">ステータス昇順</a>
-                            <a class="dropdown-item" href="#">ステータス降順</a>
-                            <a class="dropdown-item" href="#">日付昇順</a>
-                            <a class="dropdown-item" href="#">日付降順</a>
-                        </div>
-                    </div>
 
                     <div class="container">
                         <table class="table">
                             <thead>
                                 <tr>
-                                    <th>ステータス</th>
-                                    <th>タスク名</th>
-                                    <th>期日</th>
-                                    <th>カテゴリ</th>
-                                    <th>種類</th>
-                                    <th>重要度</th>
-                                    <th>スコア</th>
+                                    <th>@sortablelink('status', 'ステータス⇅')</th>
+                                    <th>@sortablelink('title', 'タスク名⇅')</th>
+                                    <th>@sortablelink('deadline', '期日⇅')</th>
+                                    <th>@sortablelink('category', 'カテゴリ⇅')</th>
+                                    <th>@sortablelink('type', '種類⇅')</th>
+                                    <th>@sortablelink('important', '重要度⇅')</th>
+                                    <th>@sortablelink('score', 'スコア⇅')</th>
                                     <th>操作</th>
                                 </tr>
                             </thead>
@@ -62,7 +53,7 @@
                                         <td>{{ $task->category }}</td>
                                         <td>{{ $task->type }}</td>
                                         <td>{{ $task->important }}</td>
-                                        <td>スコア表示</td>
+                                        <td>{{ $task->score }}</td>
                                         <td>
                                             <a href="{{ route('taskedit.edit', ['id' => $task->id]) }}"
                                                 class="btn btn-primary btn-sm">編集</a>
