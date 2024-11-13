@@ -1,6 +1,8 @@
 <?php
 //24.11.12
 //繰り返し設定を毎日の午前0時に設定
+//24/11/13
+//繰り返し処理なし（除外）→ 控えのメモに移動
 
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -19,8 +21,5 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withExceptions(function (Exceptions $exceptions) {
         //
     })
-    //繰り返し設定 daily()は毎日午前0時
-    ->withSchedule(function ($schedule) {
-        $schedule->job(CreateRecurringTasks::class)->daily();
-    })
+
     ->create();

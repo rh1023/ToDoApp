@@ -8,6 +8,8 @@
 // タスクの並び替え機能（sortable)
 //タスクの繰り返し処理を実装
 //日付フォーマットを2024-11-12から2024年11月12日に変更
+//24/11/13
+//繰り返し処理なし（除外）→ 控えのメモに移動
 
 namespace App\Http\Controllers;
 
@@ -21,7 +23,7 @@ class TaskController extends Controller
     //タスク一覧画面
     public function taskshow()
     {
-        // ログインユーザーのタスクを取得
+        // ログインユーザーのみタスクを取得
         $tasks = Task::where('user_id', Auth::id())
             ->sortable()
             ->get();
@@ -112,6 +114,7 @@ class TaskController extends Controller
             'detail' => $request->detail
         ]);
 
+        //タスクのスコア更新
         $task->score = $task->calculateScore();
         $task->save();
 
@@ -125,32 +128,5 @@ class TaskController extends Controller
         $task->delete();
 
         return redirect()->route('tasklist.taskshow')->with('success', 'タスクが削除されました');
-    }
-
-    //タスクの繰り返し
-    private function parseRepeatData($repeatString)
-    {
-        if (empty($repeatString)) {
-            return null;
-        }
-
-        $parts = explode(':', $repeatString);
-        $type = $parts[0];
-
-        switch ($type) {
-            case 'daily':
-                return ['type' => 'daily'];
-            case 'weekly':
-                return ['type' => 'weekly', 'day' => (int)$parts[1]];
-            case 'monthly':
-                if (strpos($parts[1], 'week') !== false) {
-                    $weekParts = explode('-', $parts[1]);
-                    return ['type' => 'monthly', 'week' => (int)$weekParts[0], 'weekday' => (int)$weekParts[1]];
-                } else {
-                    return ['type' => 'monthly', 'date' => (int)$parts[1]];
-                }
-            default:
-                return null;
-        }
     }
 }
