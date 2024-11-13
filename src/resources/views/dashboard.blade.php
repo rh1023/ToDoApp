@@ -27,7 +27,7 @@
                                     <div class="card">
                                         <div class="card-body">
                                             <h5 class="card-title">本日の日付</h5>
-                                            <p class="card-text">2024年 10月 23日 水曜日</p>
+                                            <p class="card-text">{{ $today }}</p>
                                         </div>
                                     </div>
 
@@ -41,7 +41,7 @@
                                     <div class="card">
                                         <div class="card-body">
                                             <h5 class="card-title">本日のスコア</h5>
-                                            <p class="card-text">100</p>
+                                            <p class="card-text">{{ $todayScore }}</p>
                                         </div>
                                     </div>
 
@@ -55,9 +55,9 @@
                                     <div class="card">
                                         <div class="card-body">
                                             <h5 class="card-title">進行中タスク</h5>
-                                            <p class="card-text">ウルトラタスクABC</p>
-                                            <p class="card-text">ウルトラタスクDEF</p>
-                                            <p class="card-text">ウルトラタスクGHI</p>
+                                            @foreach ($inProgressTasks as $task)
+                                                <p class="card-text">◎ {{ $task->title }}</p>
+                                            @endforeach
                                         </div>
                                     </div>
                                 </div>
@@ -66,9 +66,9 @@
                                     <div class="card">
                                         <div class="card-body">
                                             <h5 class="card-title">未着手タスク</h5>
-                                            <p class="card-text">ウルトラタスクABC</p>
-                                            <p class="card-text">ウルトラタスクDEF</p>
-                                            <p class="card-text">ウルトラタスクGHI</p>
+                                            @foreach ($notStartedTasks as $task)
+                                                <p class="card-text">〇 {{ $task->title }}</p>
+                                            @endforeach
                                         </div>
                                     </div>
                                 </div>
@@ -77,9 +77,9 @@
                                     <div class="card">
                                         <div class="card-body">
                                             <h5 class="card-title">完了タスク</h5>
-                                            <p class="card-text">ウルトラタスクABC</p>
-                                            <p class="card-text">ウルトラタスクDEF</p>
-                                            <p class="card-text">ウルトラタスクGHI</p>
+                                            @foreach ($completedTasks as $task)
+                                                <p class="card-text">● {{ $task->title }}</p>
+                                            @endforeach
                                         </div>
                                     </div>
                                 </div>
@@ -96,31 +96,21 @@
                                             <thead>
                                                 <tr>
                                                     <th>名前</th>
-                                                    <th>スコア</th>
-                                                    <th>タスク名</th>
+                                                    <th>合計スコア</th>
+                                                    <th>進行中タスク</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <tr>
-                                                    <td>ツボイシ</td>
-                                                    <td>100</td>
-                                                    <td>めっちゃやる</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>フタムラ</td>
-                                                    <td>30</td>
-                                                    <td>すんごいやる</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>ヤマダ</td>
-                                                    <td>10</td>
-                                                    <td>すんごいやる</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>フルカワ</td>
-                                                    <td>0</td>
-                                                    <td>すんごいやる</td>
-                                                </tr>
+                                                @foreach ($users as $user)
+                                                    <tr>
+                                                        <td>{{ $user->name }}</td>
+                                                        <td>{{ $user->todayScore }}</td>
+                                                        <td>@foreach ($user->inProgressTasks as $task)
+                                                                {{ $task->title }}<br>
+                                                            @endforeach
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
                                             </tbody>
                                         </table>
                                     </div>

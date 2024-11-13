@@ -44,7 +44,6 @@ class Task extends Model
             case '趣味':
                 $score += 1;
                 break;
-
             default:
                 $score += 1;
                 break;
