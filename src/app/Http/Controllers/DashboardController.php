@@ -24,11 +24,12 @@ class DashboardController extends Controller
         // 各ステータスごとのタスクを取得
         $inProgressTasks = Task::where('user_id', Auth::id())
             ->where('status', '進行中')
-            ->whereDate('deadline', Carbon::today())
+            // ->whereDate('deadline', Carbon::today())
+            // ->select('title', 'detail') // 取り出すカラムを指定
             ->get();
         $notStartedTasks = Task::where('user_id', Auth::id())
             ->where('status', '未着手')
-            ->whereDate('deadline', Carbon::today())
+            // ->whereDate('deadline', Carbon::today())
             ->get();
         $completedTasks = Task::where('user_id', Auth::id())
             ->where('status', '完了')

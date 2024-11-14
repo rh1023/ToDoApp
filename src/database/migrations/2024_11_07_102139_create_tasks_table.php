@@ -15,16 +15,16 @@ return new class extends Migration
             //カラム追加
             $table->id();
             $table->string('user_id');
-            $table->string('title');
-            $table->string('category');
-            $table->string('type');
-            $table->integer('important')->default(1);
-            $table->string('status')->default('未着手');
-            $table->date('deadline')->nullable();
-            $table->string('repeat')->nullable();
-            $table->integer('score')->default(0);
-            $table->text('detail')->nullable();
-            $table->integer('completed_by')->nullable();
+            $table->string('title'); //タスク名
+            $table->string('category'); //カテゴリ
+            $table->string('type'); //タスク区分
+            $table->integer('important')->default(1); //重要度
+            $table->string('status')->default('未着手'); //進捗ステータス
+            $table->date('deadline')->nullable(); //期日
+            $table->string('repeat')->nullable(); //繰り返し登録
+            $table->integer('score')->default(0); //スコア
+            $table->text('detail')->nullable(); //詳細
+            $table->integer('completed_by')->nullable(); //完了者
             $table->timestamps();
             $table->softDeletes();
 

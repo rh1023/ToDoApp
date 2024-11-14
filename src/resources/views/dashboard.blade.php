@@ -1,7 +1,3 @@
-{{--
-2024.11.07  13時半  Bootstrapを導入
---}}
-
 <head>
     <title>ダッシュボード</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
@@ -50,83 +46,87 @@
 
                             <br>
 
-                            <div class="row">
-                                <div class="col-sm-4">
-                                    <div class="card">
-                                        <div class="card-body">
-                                            <h5 class="card-title">進行中タスク</h5>
-                                            @foreach ($inProgressTasks as $task)
-                                                <p class="card-text">◎ {{ $task->title }}</p>
-                                            @endforeach
-                                        </div>
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">進行中タスク</h5>
+                                    <div class="container">
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th>タスク</th>
+                                                    <th>詳細</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach ($inProgressTasks as $task)
+                                                    <tr>
+                                                        <td>{{ $task->title }}</td>
+                                                        <td>{{ $task->detail }}</td>
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
                                     </div>
                                 </div>
-
-                                <div class="col-sm-4">
-                                    <div class="card">
-                                        <div class="card-body">
-                                            <h5 class="card-title">未着手タスク</h5>
-                                            @foreach ($notStartedTasks as $task)
-                                                <p class="card-text">〇 {{ $task->title }}</p>
-                                            @endforeach
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="col-sm-4">
-                                    <div class="card">
-                                        <div class="card-body">
-                                            <h5 class="card-title">完了タスク</h5>
-                                            @foreach ($completedTasks as $task)
-                                                <p class="card-text">● {{ $task->title }}</p>
-                                            @endforeach
-                                        </div>
-                                    </div>
-                                </div>
-
                             </div>
 
                             <br>
 
                             <div class="card">
                                 <div class="card-body">
-                                    <h5 class="card-title">メンバー状況</h5>
+                                    <h5 class="card-title">未着手タスク</h5>
                                     <div class="container">
                                         <table class="table">
                                             <thead>
                                                 <tr>
-                                                    <th>名前</th>
-                                                    <th>合計スコア</th>
-                                                    <th>進行中タスク</th>
+                                                    <th>タスク</th>
+                                                    <th>詳細</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                @foreach ($users as $user)
+                                                @foreach ($notStartedTasks as $task)
                                                     <tr>
-                                                        <td>{{ $user->name }}</td>
-                                                        <td>{{ $user->todayScore }}</td>
-                                                        <td>@foreach ($user->inProgressTasks as $task)
-                                                                {{ $task->title }}<br>
-                                                            @endforeach
-                                                        </td>
+                                                        <td>{{ $task->title }}</td>
+                                                        <td>{{ $task->detail }}</td>
                                                     </tr>
                                                 @endforeach
                                             </tbody>
                                         </table>
                                     </div>
-
-
                                 </div>
                             </div>
 
+                            <br>
+
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">完了タスク</h5>
+                                    <div class="container">
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th>タスク</th>
+                                                    <th>詳細</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach ($completedTasks as $task)
+                                                    <tr>
+                                                        <td>{{ $task->title }}</td>
+                                                        <td>{{ $task->detail }}</td>
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
-
 </x-app-layout>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
