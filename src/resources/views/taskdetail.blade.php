@@ -1,5 +1,5 @@
 <head>
-    <title>タスク編集入力画面</title>
+    <title>タスク詳細</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
 </head>
@@ -7,7 +7,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('タスク編集入力') }}
+            {{ __('タスク詳細') }}
         </h2>
     </x-slot>
 

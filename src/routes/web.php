@@ -28,7 +28,7 @@ Route::middleware('auth')->group(function () {
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
 //タスク一覧画面
-Route::get('/tasklist', [TaskController::class, 'taskshow'])->name('tasklist.taskshow');
+Route::get('/tasklist', [TaskController::class, 'show'])->name('tasklist.show');
 
 //タスク追加
 Route::get('/taskadd', [TaskController::class, 'create'])->name('taskadd.create');
@@ -43,6 +43,9 @@ Route::put('/taskedit/{task}', [TaskController::class, 'update'])->name('taskedi
 
 //タスク削除
 Route::delete('/tasks/{task}', [TaskController::class, 'destroy'])->name('tasks.destroy');
+
+// タスク完了処理のルート
+Route::post('/tasks/{id}/complete', [TaskController::class, 'complete'])->name('tasks.complete');
 
 
 //メンバー状況

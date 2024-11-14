@@ -46,4 +46,9 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function getTotalScore()
+    {
+        return Task::where('completed_by', $this->id)->sum('score');
+    }
 }

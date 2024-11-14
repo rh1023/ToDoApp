@@ -1,15 +1,3 @@
-{{--
-2024.11.07  15時半  Bootstrapを導入
-24.11.11
-タスク追加機能を実装
-入力フォームの属性をメソッドで利用するフィールドにそろえる
-フォームactionを指定する
-24.11.12
-繰り返しの項目を追加
-24.11.13
-繰り返し項目をコメント
---}}
-
 <head>
     <title>タスク追加入力画面</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
@@ -28,6 +16,15 @@
                 <div class="p-6 text-gray-900">
                     <form action="{{ route('taskadd.store') }}" method = "POST">
                         @csrf
+
+                        <div class="mb-3">
+                            <label for="status" class="form-label">ステータス</label>
+                            <select class="form-select" id="status" name="status" required>
+                                <option value="未着手">未着手</option>
+                                <option value="進行中">進行中</option>
+                                <option value="完了">完了</option>
+                            </select>
+                        </div>
 
 
                         <div class="form-group">
@@ -131,11 +128,9 @@
 
                     <br>
 
-                    <form action="{{ route('tasklist.taskshow') }}">
+                    {{-- <form action="{{ route('tasklist.show') }}">
                         <input type="submit" class="btn btn-primary" value="戻る">
-                    </form>
-
-
+                    </form> --}}
 
                 </div>
             </div>

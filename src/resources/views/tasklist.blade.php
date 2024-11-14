@@ -1,15 +1,3 @@
-{{--
-24.11.07  14時半  Bootstrapを導入
-24.11.11
-データベースの情報を表示（スコアの自動計算の表示など未実装）
-登録時・更新時に自動計算で表示させる
-24.11.12
-並び替え機能の実装（sortablelink）
-繰り返し設定の項目を更新
-日付フォーマットを2024-11-12から2024年11月12日に変更
-
---}}
-
 <head>
     <title>タスク一覧</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
@@ -29,7 +17,7 @@
                 <div class="p-6 text-gray-900">
 
                     <form action="{{ route('taskadd.create') }}" method="GET">
-                        <input type="submit" value="タスクの新規追加" class="btn btn-primary">
+                        <input type="submit" value="タスクの新規追加" class="btn btn-primary mb-3">
                     </form>
 
                     <div class="container">
@@ -43,6 +31,7 @@
                                     <th>@sortablelink('type', '種類⇅')</th>
                                     <th>@sortablelink('important', '重要度⇅')</th>
                                     <th>@sortablelink('score', 'スコア⇅')</th>
+                                    <th>詳細</th>
                                     <th>操作</th>
                                 </tr>
                             </thead>
@@ -56,7 +45,11 @@
                                         <td>{{ $task->type }}</td>
                                         <td>{{ $task->important }}</td>
                                         <td>{{ $task->score }}</td>
+                                        <td>{{ $task->detail }}</td>
                                         <td>
+                                            {{-- <a href="{{ route('taskdetail.detail', ['id' => $task->id]) }}"
+                                                class="btn btn-primary btn-sm">詳細</a> --}}
+
                                             <a href="{{ route('taskedit.edit', ['id' => $task->id]) }}"
                                                 class="btn btn-primary btn-sm">編集</a>
 
@@ -71,16 +64,14 @@
                                     </tr>
                                 @endforeach
                             </tbody>
+
                         </table>
                     </div>
+
                 </div>
             </div>
         </div>
     </div>
-
-
-
-
 
 </x-app-layout>
 

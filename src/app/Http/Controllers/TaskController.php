@@ -1,15 +1,7 @@
 <?php
-// 24.11.11
-// タスクの追加
-// タスクの更新
-// タスクの削除
-// の機能追加
-// 24.11.12
-// タスクの並び替え機能（sortable)
-//タスクの繰り返し処理を実装
-//日付フォーマットを2024-11-12から2024年11月12日に変更
-//24/11/13
-//繰り返し処理なし（除外）→ 控えのメモに移動
+//11.14メモ
+//タスク完了者がデータベースで保存されない
+//完了者によってスコアが加算される仕組みにしたい
 
 namespace App\Http\Controllers;
 
@@ -17,16 +9,31 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Models\Task;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 class TaskController extends Controller
 {
     //タスク一覧画面
-    public function taskshow()
+    public function show()
     {
-        // ログインユーザーのみタスクを取得
-        $tasks = Task::where('user_id', Auth::id())
-            ->sortable()
-            ->get();
+        // ログインユーザーIDを取得
+        $userId = Auth::id();
+
+        // ログインユーザーの個人タスク、他者の共有タスク、任意タスクを取得
+        $tasks = Task::where(function ($query) use ($userId) {
+            $query->where('user_id', $userId) // 自分の個人タスク
+                ->orWhere('type', '共有') // 共有タスクは全員に表示
+                ->orWhere(function ($q) use ($userId) {
+                    $q->where('type', '任意')
+                        ->where(function ($subQuery) use ($userId) {
+                            $subQuery->whereNull('completed_by') // 完了していない任意タスク
+                                ->orWhere('completed_by', $userId); // 自分が完了した任意タスク
+                        });
+                });
+        })->sortable()->get();
+
+        //デバッグ（ここで取得したタスクの内容を確認する）
+        //dd($tasks);
 
         // 日付フォーマットの設定
         foreach ($tasks as $task) {
@@ -36,6 +43,8 @@ class TaskController extends Controller
         // tasklistビューにタスクを渡す
         return view('tasklist', compact('tasks'));
     }
+
+    //----------------------------------------------------------------------------------------------------
 
     //タスク追加画面
     public function create()
@@ -67,7 +76,8 @@ class TaskController extends Controller
                 'category' => $request->category,
                 'type' => $request->type,
                 'important' => $request->important,
-                'status' => '未着手',
+                // 'status' => '未着手',
+                'status' => $request->status,
                 'deadline' => $request->deadline,
                 'repeat' => $request->repeat,
                 'score' => 0,
@@ -79,8 +89,16 @@ class TaskController extends Controller
         $task->save();
 
         //リダイレクト
-        return redirect()->route('tasklist.taskshow')->with('success', 'タスクが追加されました');
+        return redirect()->route('tasklist.show')->with('success', 'タスクが追加されました');
     }
+
+
+    //タスク詳細
+    // public function detail($id){
+    //     $task = Task::findOrFail($id);
+    //     return view('taskdetail', compact('task'));
+    // }
+
 
     //タスク編集画面
     public function edit($id)
@@ -88,6 +106,7 @@ class TaskController extends Controller
         $task = Task::findOrFail($id);
         return view('taskedit', compact('task'));
     }
+
     //タスク更新
     public function update(Request $request, $id)
     {
@@ -118,7 +137,7 @@ class TaskController extends Controller
         $task->score = $task->calculateScore();
         $task->save();
 
-        return redirect()->route('tasklist.taskshow')->with('success', 'タスクが更新されました');
+        return redirect()->route('tasklist.show')->with('success', 'タスクが更新されました');
     }
 
     //タスクの削除
@@ -127,6 +146,38 @@ class TaskController extends Controller
         $task = Task::findOrFail($id);
         $task->delete();
 
-        return redirect()->route('tasklist.taskshow')->with('success', 'タスクが削除されました');
+        return redirect()->route('tasklist.show')->with('success', 'タスクが削除されました');
     }
+
+    // タスク完了処理
+    public function complete($id)
+{
+    $task = Task::findOrFail($id);
+    $userId = Auth::id();
+
+    // タスクがすでに完了しているかチェック
+    if ($task->status === '完了') {
+        return redirect()->route('tasklist.show')->withErrors("このタスクはすでに完了しています。");
+    }
+
+    // 完了者を記録
+    $task->completed_by = $userId;
+    Log::info("Setting completed_by to: " . $userId); // デバッグログ
+
+    // ステータスを完了に設定
+    $task->status = '完了';
+
+    // スコア計算
+    $score = $task->calculateScore();
+    $task->score += $score;
+
+    // タスクを保存
+    if (!$task->save()) {
+        Log::error("Failed to save task with ID: {$task->id}");
+    } else {
+        Log::info("Task saved successfully with completed_by: " . $task->completed_by);
+    }
+
+    return redirect()->route('tasklist.show')->with('success', "タスク '{$task->title}' を完了しました。");
+}
 }
