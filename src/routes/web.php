@@ -46,7 +46,7 @@ Route::delete('/tasks/{task}', [TaskController::class, 'destroy'])->name('tasks.
 
 
 //メンバー状況
-Route::get('/memberlist', [MemberController::class, 'mem_show'])->name('memberlist.mem_show');
+Route::get('/memberlist', [MemberController::class, 'show'])->name('memberlist.show');
 
 //カレンダー
 Route::get('/historycalendar', [CalendarController::class, 'history'])->name('historycalendar.history');

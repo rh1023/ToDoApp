@@ -31,7 +31,7 @@
 
                 <!-- メンバー一覧 -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('memberlist.mem_show')" :active="request()->routeIs('memberlist.mem_show')">
+                    <x-nav-link :href="route('memberlist.show')" :active="request()->routeIs('memberlist.show')">
                         {{ __('メンバー') }}
                     </x-nav-link>
                 </div>
