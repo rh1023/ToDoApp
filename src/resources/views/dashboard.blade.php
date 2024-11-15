@@ -54,14 +54,14 @@
                                             <thead>
                                                 <tr>
                                                     <th>タスク</th>
-                                                    <th>詳細</th>
+                                                    {{-- <th>詳細</th> --}}
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 @foreach ($inProgressTasks as $task)
                                                     <tr>
                                                         <td>{{ $task->title }}</td>
-                                                        <td>{{ $task->detail }}</td>
+                                                        {{-- <td>{{ $task->detail }}</td> --}}
                                                     </tr>
                                                 @endforeach
                                             </tbody>
@@ -80,14 +80,14 @@
                                             <thead>
                                                 <tr>
                                                     <th>タスク</th>
-                                                    <th>詳細</th>
+                                                    {{-- <th>詳細</th> --}}
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 @foreach ($notStartedTasks as $task)
                                                     <tr>
                                                         <td>{{ $task->title }}</td>
-                                                        <td>{{ $task->detail }}</td>
+                                                        {{-- <td>{{ $task->detail }}</td> --}}
                                                     </tr>
                                                 @endforeach
                                             </tbody>
@@ -106,14 +106,14 @@
                                             <thead>
                                                 <tr>
                                                     <th>タスク</th>
-                                                    <th>詳細</th>
+                                                    {{-- <th>詳細</th> --}}
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 @foreach ($completedTasks as $task)
                                                     <tr>
                                                         <td>{{ $task->title }}</td>
-                                                        <td>{{ $task->detail }}</td>
+                                                        {{-- <td>{{ $task->detail }}</td> --}}
                                                     </tr>
                                                 @endforeach
                                             </tbody>

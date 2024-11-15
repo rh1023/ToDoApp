@@ -27,7 +27,7 @@ class TaskController extends Controller
                 //共有タスク
                 ->orWhere(function ($q) use ($userId) {
                     $q->where('user_id', $userId)
-                        ->where('type', '共有');
+                        ->orWhere('type', '共有');
                 })
 
                 //任意タスク
@@ -58,6 +58,46 @@ class TaskController extends Controller
     }
 
     //タスクの保存処理
+    // public function store(Request $request)
+    // {
+    //     //バリデーション
+    //     $request->validate(
+    //         [
+    //             'title' => 'required|string|max:255',
+    //             'category' => 'required|string|max:255',
+    //             'important' => 'required|integer|min:1|max:5',
+    //             'deadline' => 'nullable|date',
+    //             'repeat' => 'nullable|string|max:255',
+    //             'detail' => 'nullable|string'
+
+    //         ]
+    //     );
+
+    //     //タスクの作成
+    //     $task = Task::create(
+    //         [
+    //             'user_id' => Auth::id(),
+    //             'title' => $request->title,
+    //             'category' => $request->category,
+    //             'type' => $request->type,
+    //             'important' => $request->important,
+    //             // 'status' => '未着手',
+    //             'status' => $request->status,
+    //             'deadline' => $request->deadline,
+    //             'repeat' => $request->repeat,
+    //             'score' => 0,
+    //             'detail' => $request->detail
+    //         ]
+    //     );
+
+    //     $task->score = $task->calculateScore();
+    //     $task->save();
+
+
+    //     return redirect()->route('tasklist.show')->with('success', 'タスクが追加されました');
+    // }
+
+    //タスクの保存処理ver2
     public function store(Request $request)
     {
         //バリデーション
@@ -68,8 +108,10 @@ class TaskController extends Controller
                 'important' => 'required|integer|min:1|max:5',
                 'deadline' => 'nullable|date',
                 'repeat' => 'nullable|string|max:255',
-                'detail' => 'nullable|string'
-
+                'detail' => 'nullable|string',
+                'type' => 'required|string|in:個人,共有,任意', // タイプのバリデーションを追加
+                'user_ids' => 'nullable|array', // 共有タスクに関連するユーザーIDの配列
+                'user_ids.*' => 'exists:users,id', // ユーザーIDが存在するか確認
             ]
         );
 
@@ -90,8 +132,19 @@ class TaskController extends Controller
             ]
         );
 
+        // タスクのスコアを計算して保存
         $task->score = $task->calculateScore();
         $task->save();
+
+        // ここから追加：共有タスクの場合、中間テーブルにユーザーを追加
+        if ($task->type === '共有') { // タイプが「共有」の場合
+            $userIds = $request->input('user_ids', []); // フォームから送信されたユーザーIDの配列
+
+            foreach ($userIds as $userId) {
+                // 中間テーブルにユーザーを追加
+                $task->users()->attach($userId); // ここ
+            }
+        }
 
         return redirect()->route('tasklist.show')->with('success', 'タスクが追加されました');
     }
@@ -167,7 +220,6 @@ class TaskController extends Controller
         $task->save();
 
         return redirect()->route('tasklist.show')->with('success', 'タスクが更新されました');
-
     }
 
     //タスクの削除
@@ -180,5 +232,31 @@ class TaskController extends Controller
     }
 
     // 共有タスクの完了処理
+    public function completeSharedTask(Request $request, $taskId)
+    {
+        // タスクを取得
+        $task = Task::findOrFail($taskId);
 
+        // ユーザーがこのタスクに参加しているか確認
+        if (!$task->users()->where('user_id', Auth::id())->exists()) {
+            return redirect()->route('tasklist.show')->with('error', 'このタスクには参加していません。');
+        }
+
+        // タスクが完了状態に変更された場合の処理
+        $task->completed_by = Auth::id(); // 完了者を設定
+        $task->status = '完了'; // ステータスを更新
+        $task->save();
+
+        // 中間テーブルの進捗状況を更新
+        $task->users()->updateExistingPivot(Auth::id(), ['status' => '完了']); // ユーザーの進捗状況を更新
+
+        // 完了したユーザーにスコア加算
+        $completedUser = User::find(Auth::id());
+        if ($completedUser) {
+            $completedUser->score += $task->score; // スコア加算
+            $completedUser->save();
+        }
+
+        return redirect()->route('tasklist.show')->with('success', 'タスクが完了し、スコアが付与されました。');
+    }
 }
