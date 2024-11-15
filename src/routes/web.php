@@ -7,7 +7,7 @@ use App\Http\Controllers\TaskController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\DashboardController;
-use App\Models\CustomUser;
+
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -44,7 +44,11 @@ Route::put('/taskedit/{task}', [TaskController::class, 'update'])->name('taskedi
 //タスク削除
 Route::delete('/tasks/{task}', [TaskController::class, 'destroy'])->name('tasks.destroy');
 
-// タスク完了処理のルート
+//タスク詳細画面
+Route::get('/taskdetail/{id}', [TaskController::class, 'detail'])->name('taskdetail.detail');
+Route::put('/taskdetail/{task}', [TaskController::class, 'update'])->name('taskdetail.update');
+
+// タスク完了（タスクを完了したユーザーにスコアが加算される）
 Route::post('/tasks/{id}/complete', [TaskController::class, 'complete'])->name('tasks.complete');
 
 

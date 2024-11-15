@@ -29,7 +29,6 @@
                             </select>
                         </div>
 
-
                         <div class="form-group">
                             <label for="title">タスク名</label>
                             <input type="text" class="form-control" id="title" name="title"
@@ -91,7 +90,7 @@
                                 <div class="card">
                                     <div class="card-body">
                                         <div class = "form-group">
-                                            <label for="type" class="">タスクタイプ</label>
+                                            <label for="type" class="">区分</label>
                                             <select class="form-control" id="type" name="type" required>
                                                 <option value="">選択してください</option>
                                                 <option value="個人" {{ $task->type == '個人' ? 'selected' : '' }}>個人

@@ -18,6 +18,14 @@ class Task extends Model
     //ソート使う項目
     public $sortable = ['status', 'title', 'deadline', 'category', 'type', 'important', 'score'];
 
+    //TaskモデルとUserモデルに多対多のリレーションシップ定義
+    public function users()
+    {
+        // return $this->belongsToMany(User::class, 'task_user');
+        return $this->belongsToMany(User::class, 'task_user')->withPivot('status', 'completed_at');
+
+    }
+
     //スコア計算
     public function calculateScore()
     {
@@ -29,10 +37,10 @@ class Task extends Model
                 $score += 3;
                 break;
             case '仕事':
-                $score += 3;
+                $score += 2;
                 break;
             case '健康':
-                $score += 5;
+                $score += 4;
                 break;
             case '自己研鑽':
                 $score += 5;
@@ -45,23 +53,21 @@ class Task extends Model
                 break;
         }
         //重要度
-        $score += $this->important;
+        $score *= $this->important;
 
         //タスク種類
         switch ($this->type) {
             case '個人':
-                $score += 1;
+                $score *= 1;
                 break;
             case '共有':
-                $score += 1;
+                $score *= 2;
                 break;
             case '任意':
-                $score += 3;
+                $score *= 3;
                 break;
         }
 
         return round($score);
     }
-
-
 }

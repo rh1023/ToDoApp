@@ -46,7 +46,14 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+    //TaskモデルとUserモデルに多対多のリレーションシップ定義
+    public function tasks()
+    {
+        // return $this->belongsToMany(Task::class, 'task_user');
+        return $this->belongsToMany(Task::class, 'task_user')->withPivot('status', 'completed_at');
+    }
 
+    //合計スコア表示
     public function getTotalScore()
     {
         return Task::where('completed_by', $this->id)->sum('score');

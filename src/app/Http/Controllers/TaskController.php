@@ -1,13 +1,12 @@
 <?php
-//11.14メモ
-//タスク完了者がデータベースで保存されない
-//完了者によってスコアが加算される仕組みにしたい
+//共有タスクの中間テーブル作成。処理未実装
 
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Models\Task;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 
@@ -19,21 +18,29 @@ class TaskController extends Controller
         // ログインユーザーIDを取得
         $userId = Auth::id();
 
-        // ログインユーザーの個人タスク、他者の共有タスク、任意タスクを取得
         $tasks = Task::where(function ($query) use ($userId) {
-            $query->where('user_id', $userId) // 自分の個人タスク
-                ->orWhere('type', '共有') // 共有タスクは全員に表示
+            //個人タスク
+            $query->where(function ($q) use ($userId) {
+                $q->where('user_id', $userId)
+                    ->where('type', '個人');
+            })
+                //共有タスク
+                ->orWhere(function ($q) use ($userId) {
+                    $q->where('user_id', $userId)
+                        ->where('type', '共有');
+                })
+
+                //任意タスク
                 ->orWhere(function ($q) use ($userId) {
                     $q->where('type', '任意')
-                        ->where(function ($subQuery) use ($userId) {
-                            $subQuery->whereNull('completed_by') // 完了していない任意タスク
-                                ->orWhere('completed_by', $userId); // 自分が完了した任意タスク
-                        });
+                        ->where('status', '未着手')
+                        ->orWhere('progress_by', $userId)
+                        ->orWhere('completed_by', $userId);
                 });
-        })->sortable()->get();
+        })
+            ->sortable()->get();
 
-        //デバッグ（ここで取得したタスクの内容を確認する）
-        //dd($tasks);
+
 
         // 日付フォーマットの設定
         foreach ($tasks as $task) {
@@ -43,8 +50,6 @@ class TaskController extends Controller
         // tasklistビューにタスクを渡す
         return view('tasklist', compact('tasks'));
     }
-
-    //----------------------------------------------------------------------------------------------------
 
     //タスク追加画面
     public function create()
@@ -88,19 +93,19 @@ class TaskController extends Controller
         $task->score = $task->calculateScore();
         $task->save();
 
-        //リダイレクト
         return redirect()->route('tasklist.show')->with('success', 'タスクが追加されました');
     }
 
 
     //タスク詳細
-    // public function detail($id){
-    //     $task = Task::findOrFail($id);
-    //     return view('taskdetail', compact('task'));
-    // }
+    public function detail($id)
+    {
+        $task = Task::findOrFail($id);
+        return view('taskdetail', compact('task'));
+    }
 
 
-    //タスク編集画面
+    //タスク編集
     public function edit($id)
     {
         $task = Task::findOrFail($id);
@@ -122,22 +127,47 @@ class TaskController extends Controller
             'status' => 'required|string|max:255',
         ]);
 
+        $oldStatus = $task->status;
+        $newStatus = $request->status;
+
         $task->update([
             'title' => $request->title,
             'category' => $request->category,
             'type' => $request->type,
             'important' => $request->important,
-            'status' => $request->status,
+            'status' => $newStatus,
             'deadline' => $request->deadline,
             'repeat' => $request->repeat,
-            'detail' => $request->detail
+            'detail' => $request->detail,
         ]);
 
-        //タスクのスコア更新
+        //タスクが進行中状態に変更された場合の処理
+        if ($oldStatus !== '進行中' && $newStatus === '進行中') {
+            $task->progress_by = Auth::id();
+            $task->save();
+        }
+
+        // タスクが完了状態に変更された場合の処理
+        if ($oldStatus !== '完了' && $newStatus === '完了') {
+            $task->completed_by = Auth::id();
+            $task->save();
+
+            // 完了したユーザーにスコア加算
+            $completedUser = Task::find($task->completed_by);
+            if ($completedUser) {
+                $completedUser->score += $task->score;
+                $completedUser->save();
+            }
+
+            return redirect()->route('tasklist.show')->with('success', 'タスクが完了し、スコアが付与されました。');
+        }
+
+        // タスクのスコア更新
         $task->score = $task->calculateScore();
         $task->save();
 
         return redirect()->route('tasklist.show')->with('success', 'タスクが更新されました');
+
     }
 
     //タスクの削除
@@ -149,35 +179,6 @@ class TaskController extends Controller
         return redirect()->route('tasklist.show')->with('success', 'タスクが削除されました');
     }
 
-    // タスク完了処理
-    public function complete($id)
-{
-    $task = Task::findOrFail($id);
-    $userId = Auth::id();
+    // 共有タスクの完了処理
 
-    // タスクがすでに完了しているかチェック
-    if ($task->status === '完了') {
-        return redirect()->route('tasklist.show')->withErrors("このタスクはすでに完了しています。");
-    }
-
-    // 完了者を記録
-    $task->completed_by = $userId;
-    Log::info("Setting completed_by to: " . $userId); // デバッグログ
-
-    // ステータスを完了に設定
-    $task->status = '完了';
-
-    // スコア計算
-    $score = $task->calculateScore();
-    $task->score += $score;
-
-    // タスクを保存
-    if (!$task->save()) {
-        Log::error("Failed to save task with ID: {$task->id}");
-    } else {
-        Log::info("Task saved successfully with completed_by: " . $task->completed_by);
-    }
-
-    return redirect()->route('tasklist.show')->with('success', "タスク '{$task->title}' を完了しました。");
-}
 }

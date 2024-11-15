@@ -31,7 +31,7 @@
                                     <th>@sortablelink('type', '種類⇅')</th>
                                     <th>@sortablelink('important', '重要度⇅')</th>
                                     <th>@sortablelink('score', 'スコア⇅')</th>
-                                    <th>詳細</th>
+                                    {{-- <th>詳細</th> --}}
                                     <th>操作</th>
                                 </tr>
                             </thead>
@@ -45,10 +45,10 @@
                                         <td>{{ $task->type }}</td>
                                         <td>{{ $task->important }}</td>
                                         <td>{{ $task->score }}</td>
-                                        <td>{{ $task->detail }}</td>
+                                        {{-- <td>{{ $task->detail }}</td> --}}
                                         <td>
-                                            {{-- <a href="{{ route('taskdetail.detail', ['id' => $task->id]) }}"
-                                                class="btn btn-primary btn-sm">詳細</a> --}}
+                                            <a href="{{ route('taskdetail.detail', ['id' => $task->id]) }}"
+                                                class="btn btn-primary btn-sm">詳細</a>
 
                                             <a href="{{ route('taskedit.edit', ['id' => $task->id]) }}"
                                                 class="btn btn-primary btn-sm">編集</a>
