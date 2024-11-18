@@ -84,7 +84,6 @@ class Task extends Model
     }
 
 
-
     //中間テーブルの情報を簡単に扱えるようにスコープやリレーションを拡張
     public function userStatus()
     {

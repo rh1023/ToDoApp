@@ -27,8 +27,8 @@
                                         <div class="card-body">
                                             <ul class="nav nav-tabs" id="taskTabs-{{ $member->id }}" role="tablist">
                                                 <li class="nav-item" role="presentation">
-                                                    <button class="nav-link active" id="in-progress-tab-{{ $member->id }}"
-                                                        data-bs-toggle="tab"
+                                                    <button class="nav-link active"
+                                                        id="in-progress-tab-{{ $member->id }}" data-bs-toggle="tab"
                                                         data-bs-target="#in-progress-{{ $member->id }}" type="button"
                                                         role="tab" aria-controls="in-progress"
                                                         aria-selected="true">進行中</button>
@@ -49,12 +49,14 @@
                                                 </li>
                                             </ul>
                                             <div class="tab-content" id="taskTabsContent-{{ $member->id }}">
-                                                <div class="tab-pane fade show active" id="in-progress-{{ $member->id }}"
-                                                    role="tabpanel" aria-labelledby="in-progress-tab-{{ $member->id }}">
+                                                <div class="tab-pane fade show active"
+                                                    id="in-progress-{{ $member->id }}" role="tabpanel"
+                                                    aria-labelledby="in-progress-tab-{{ $member->id }}">
                                                     <ul class="list-group list-group-flush">
                                                         @forelse ($member->inProgressTasks as $task)
                                                             <li class="list-group-item">
-                                                                <span class="text-warning">進行中:</span> {{ $task->title }}
+                                                                <span class="text-warning">進行中:</span>
+                                                                {{ $task->title }}
                                                             </li>
                                                         @empty
                                                             <li class="list-group-item text-muted">進行中タスクはありません。</li>
@@ -62,11 +64,13 @@
                                                     </ul>
                                                 </div>
                                                 <div class="tab-pane fade" id="not-started-{{ $member->id }}"
-                                                    role="tabpanel" aria-labelledby="not-started-tab-{{ $member->id }}">
+                                                    role="tabpanel"
+                                                    aria-labelledby="not-started-tab-{{ $member->id }}">
                                                     <ul class="list-group list-group-flush">
                                                         @forelse ($member->notStartedTasks as $task)
                                                             <li class="list-group-item">
-                                                                <span class="text-danger">未着手:</span> {{ $task->title }}
+                                                                <span class="text-danger">未着手:</span>
+                                                                {{ $task->title }}
                                                             </li>
                                                         @empty
                                                             <li class="list-group-item text-muted">未着手タスクはありません。</li>
@@ -74,11 +78,13 @@
                                                     </ul>
                                                 </div>
                                                 <div class="tab-pane fade" id="completed-{{ $member->id }}"
-                                                    role="tabpanel" aria-labelledby="completed-tab-{{ $member->id }}">
+                                                    role="tabpanel"
+                                                    aria-labelledby="completed-tab-{{ $member->id }}">
                                                     <ul class="list-group list-group-flush">
                                                         @forelse ($member->completedTasks as $task)
                                                             <li class="list-group-item">
-                                                                <span class="text-success">完了:</span> {{ $task->title }}
+                                                                <span class="text-success">完了:</span>
+                                                                {{ $task->title }}
                                                             </li>
                                                         @empty
                                                             <li class="list-group-item text-muted">完了タスクはありません。</li>

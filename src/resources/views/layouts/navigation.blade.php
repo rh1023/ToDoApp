@@ -31,19 +31,12 @@
                     </x-nav-link>
                 </div>
 
-                <!-- 履歴 -->
+                <!-- カレンダー -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('historycalendar.history')" :active="request()->routeIs('historycalendar.history')">
+                    <x-nav-link :href="route('historycalendar.index')" :active="request()->routeIs('historycalendar.index')">
                         {{ __('カレンダー') }}
                     </x-nav-link>
                 </div>
-
-                <!-- グループ管理 -->
-                {{-- <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('groupmanagement.use_group')" :active="request()->routeIs('groupmanagement.use_group')">
-                        {{ __('グループ') }}
-                    </x-nav-link>
-                </div> --}}
 
                 <!-- マイページ -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">

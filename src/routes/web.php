@@ -35,11 +35,8 @@ Route::get('/taskadd', [TaskController::class, 'create'])->name('taskadd.create'
 Route::post('/taskadd', [TaskController::class, 'store'])->name('taskadd.store');
 
 //タスク編集
-// Route::get('/taskedit', [TaskController::class, 'edit'])->name('taskedit.edit');
-// Route::get('/taskedit/{task}', [TaskController::class, 'edit'])->name('taskedit.edit');
 Route::get('/taskedit/{id}', [TaskController::class, 'edit'])->name('taskedit.edit');
 Route::put('/taskedit/{task}', [TaskController::class, 'update'])->name('taskedit.update');
-
 
 //タスク削除
 Route::delete('/tasks/{task}', [TaskController::class, 'destroy'])->name('tasks.destroy');
@@ -51,14 +48,16 @@ Route::put('/taskdetail/{task}', [TaskController::class, 'update'])->name('taskd
 // タスク完了（タスクを完了したユーザーにスコアが加算される）
 Route::post('/tasks/{id}/complete', [TaskController::class, 'complete'])->name('tasks.complete');
 
-
 //メンバー状況
 Route::get('/memberlist', [MemberController::class, 'show'])->name('memberlist.show');
 
 //カレンダー
 Route::get('/historycalendar', [CalendarController::class, 'history'])->name('historycalendar.history');
+Route::get('/calendar/history', [CalendarController::class, 'history']);
+// カレンダー履歴一覧
+Route::get('/historycalendar', [CalendarController::class, 'index'])->name('historycalendar.index');
 
-//追加機能：グループ
-Route::get('/groupmanagement', [GroupController::class, 'use_group'])->name('groupmanagement.use_group');
+// 特定日の詳細
+Route::get('/historycalendar/{date}', [CalendarController::class, 'show'])->name('historycalendar.show');
 
 require __DIR__ . '/auth.php';

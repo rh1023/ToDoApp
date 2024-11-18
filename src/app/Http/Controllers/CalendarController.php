@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Auth;
@@ -18,13 +19,13 @@ class CalendarController extends Controller
 
         $tasks = Task::with(['users' => function ($query) use ($userId) {
             $query->where('user_id', $userId)
-                  ->where('status', '完了');
+                ->where('status', '完了');
         }])
-        ->whereHas('users', function ($query) use ($userId, $startOfMonth, $endOfMonth) {
-            $query->where('user_id', $userId)
-                  ->whereBetween('completed_at', [$startOfMonth, $endOfMonth]);
-        })
-        ->get();
+            ->whereHas('users', function ($query) use ($userId, $startOfMonth, $endOfMonth) {
+                $query->where('user_id', $userId)
+                    ->whereBetween('completed_at', [$startOfMonth, $endOfMonth]);
+            })
+            ->get();
 
         // FullCalendar用のイベントデータを準備
         $events = [];
@@ -45,8 +46,6 @@ class CalendarController extends Controller
     }
 
 
-
-
     // 特定日のタスク詳細
     public function show($date)
     {
@@ -55,15 +54,15 @@ class CalendarController extends Controller
         // 指定日の完了タスクを取得
         $tasks = Task::with(['users' => function ($query) use ($userId, $date) {
             $query->where('user_id', $userId)
-                  ->where('status', '完了')
-                  ->whereDate('completed_at', $date);
+                ->where('status', '完了')
+                ->whereDate('completed_at', $date);
         }])
-        ->whereHas('users', function ($query) use ($userId, $date) {
-            $query->where('user_id', $userId)
-                  ->where('status', '完了')
-                  ->whereDate('completed_at', $date);
-        })
-        ->get();
+            ->whereHas('users', function ($query) use ($userId, $date) {
+                $query->where('user_id', $userId)
+                    ->where('status', '完了')
+                    ->whereDate('completed_at', $date);
+            })
+            ->get();
 
         return view('calendardetail', compact('tasks', 'date'));
     }

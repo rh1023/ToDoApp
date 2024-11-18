@@ -15,9 +15,6 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
-
-
-
                     <div class="form-group">
                         <label for="title">タスク名</label>
                         <p class="form-control">{{ $task->title }}</p>
@@ -80,12 +77,10 @@
                         <label for="detail">詳細</label>
                         <p class="form-control">{{ $task->detail }}</p>
                     </div>
-
                 </div>
             </div>
         </div>
     </div>
-
 </x-app-layout>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"

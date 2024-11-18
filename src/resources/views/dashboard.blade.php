@@ -106,20 +106,12 @@
                                             <thead>
                                                 <tr>
                                                     <th>タスク</th>
-                                                    <th>完了日</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 @foreach ($completedTasks as $task)
                                                     <tr>
                                                         <td>{{ $task->title }}</td>
-                                                        <td>
-                                                            @if ($task->pivot && $task->pivot->completed_at)
-                                                                {{ Carbon\Carbon::parse($task->pivot->completed_at)->format('Y年m月d日') }}
-                                                            @else
-                                                                未設定
-                                                            @endif
-                                                        </td>
                                                     </tr>
                                                 @endforeach
                                             </tbody>
@@ -127,8 +119,6 @@
                                     </div>
                                 </div>
                             </div>
-
-
                         </div>
                     </div>
                 </div>

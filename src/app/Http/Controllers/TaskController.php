@@ -57,7 +57,6 @@ class TaskController extends Controller
     }
 
 
-
     //タスク追加画面
     public function create()
     {
@@ -78,7 +77,7 @@ class TaskController extends Controller
                 'deadline' => 'nullable|date',
                 'repeat' => 'nullable|string|max:255',
                 'detail' => 'nullable|string',
-                'type' => 'required|string|in:個人,共有,任意', // タイプのバリデーションを追加
+                'type' => 'required|string|in:個人,共有,任意',
                 'user_ids' => 'nullable|array', // 共有タスクに関連するユーザーIDの配列
                 'user_ids.*' => 'exists:users,id', // ユーザーIDが存在するか確認
             ]
@@ -92,7 +91,6 @@ class TaskController extends Controller
                 'category' => $request->category,
                 'type' => $request->type,
                 'important' => $request->important,
-                // 'status' => '未着手',
                 'status' => $request->status,
                 'deadline' => $request->deadline,
                 'repeat' => $request->repeat,
@@ -104,16 +102,6 @@ class TaskController extends Controller
         // タスクのスコアを計算して保存
         $task->score = $task->calculateScore();
         $task->save();
-
-
-
-        // 共有タスク全員作成
-        // if ($task->type === '共有') {
-        //     $allUserIds = User::pluck('id')->toArray(); // 全ユーザーのIDを取得
-        //     foreach ($allUserIds as $userId) {
-        //         $task->users()->attach($userId, ['status' => '未着手']);
-        //     }
-        // }
 
         if ($task->type === '共有') {
             $allUserIds = User::pluck('id')->toArray(); // 全ユーザーのIDを取得
@@ -127,8 +115,6 @@ class TaskController extends Controller
 
         return redirect()->route('tasklist.show')->with('success', 'タスクが追加されました');
     }
-
-
 
 
     //タスク詳細
@@ -160,7 +146,7 @@ class TaskController extends Controller
             // 個人タスクまたは任意タスクの場合、直接タスクのステータスを使用
             $userStatus = (object) [
                 'status' => $task->status,
-                'completed_at' => $task->updated_at, // 任意で`completed_at`を設定
+                'completed_at' => $task->updated_at,
             ];
         }
 
@@ -169,8 +155,6 @@ class TaskController extends Controller
             'userStatus' => $userStatus,
         ]);
     }
-
-
 
 
     public function update(Request $request, $id)
@@ -186,7 +170,7 @@ class TaskController extends Controller
             'repeat' => 'nullable|string|max:255',
             'detail' => 'nullable|string',
             'status' => 'required|string|max:255',
-            'type' => 'required|string|in:個人,共有,任意', // typeを明示的にバリデート
+            'type' => 'required|string|in:個人,共有,任意',
         ]);
 
         $oldType = $task->type;
@@ -221,19 +205,6 @@ class TaskController extends Controller
         }
 
         // タスクが「完了」状態に変更された場合の処理
-        // if ($oldStatus !== '完了' && $newStatus === '完了') {
-        //     // 中間テーブルで完了状況とスコアを更新
-        //     $task->users()->updateExistingPivot(Auth::id(), [
-        //         'status' => '完了',
-        //         'completed_at' => now(),
-        //         'completed_by' => Auth::id(),
-        //         'score' => $task->calculateScore(), // スコアを計算して保存
-        //     ]);
-
-        //     return redirect()->route('tasklist.show')->with('success', 'タスクが完了し、スコアが付与されました。');
-        // }
-
-        // タスクが「完了」状態に変更された場合の処理
         if ($oldStatus !== '完了' && $newStatus === '完了') {
             // 中間テーブルで完了状況とスコアを更新
             $task->users()->updateExistingPivot(Auth::id(), [
@@ -247,7 +218,6 @@ class TaskController extends Controller
             $task->save();
             return redirect()->route('tasklist.show')->with('success', 'タスクが完了し、スコアが付与されました。');
         }
-
 
         // タスクが共有タスクの場合、中間テーブルを更新
         if ($newType === '共有') {
@@ -268,7 +238,6 @@ class TaskController extends Controller
 
         return redirect()->route('tasklist.show')->with('success', 'タスクが更新されました');
     }
-
 
 
     //タスクの削除

@@ -12,8 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('task_user', function (Blueprint $table) {
-            //
-            $table->integer('score')->default(0)->after('completed_by'); // デフォルト値は0
+            $table->integer('score')->default(0)->after('completed_by');
         });
     }
 
@@ -23,7 +22,6 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('task_user', function (Blueprint $table) {
-            //
             $table->dropColumn('score');
         });
     }
