@@ -98,23 +98,6 @@
 
                         <br>
 
-                        {{-- <div class = "form-group">
-                            <label for = "repeat">繰り返し設定</label>
-                            <select class="form-control" id="repeat" name="repeat">
-                                <option value="">繰り返しなし</option>
-                                <option value="daily">毎日</option>
-                                <option value="weekly:1">毎週月曜日</option>
-                                <option value="weekly:2">毎週火曜日</option>
-                                <option value="weekly:3">毎週水曜日</option>
-                                <option value="weekly:4">毎週木曜日</option>
-                                <option value="weekly:5">毎週金曜日</option>
-                                <option value="weekly:6">毎週土曜日</option>
-                                <option value="weekly:0">毎週日曜日</option>
-                            </select>
-                        </div> --}}
-
-                        <br>
-
                         <div class="form-group">
                             <label for="detail">詳細</label>
                             <textarea class="form-control" id="detail" name="detail" rows="3"></textarea>
@@ -123,15 +106,7 @@
                         <br>
 
                         <button type="submit" class = "btn btn-primary">保存</button>
-
                     </form>
-
-                    <br>
-
-                    {{-- <form action="{{ route('tasklist.show') }}">
-                        <input type="submit" class="btn btn-primary" value="戻る">
-                    </form> --}}
-
                 </div>
             </div>
         </div>

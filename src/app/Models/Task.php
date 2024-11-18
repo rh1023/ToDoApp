@@ -21,9 +21,7 @@ class Task extends Model
     //TaskモデルとUserモデルに多対多のリレーションシップ定義
     public function users()
     {
-        // return $this->belongsToMany(User::class, 'task_user');
         return $this->belongsToMany(User::class, 'task_user')->withPivot('status', 'completed_at');
-
     }
 
     //スコア計算
@@ -37,19 +35,19 @@ class Task extends Model
                 $score += 3;
                 break;
             case '仕事':
-                $score += 2;
+                $score += 3;
                 break;
             case '健康':
-                $score += 4;
-                break;
-            case '自己研鑽':
                 $score += 5;
                 break;
+            case '自己研鑽':
+                $score += 4;
+                break;
             case '趣味':
-                $score += 1;
+                $score += 2;
                 break;
             default:
-                $score += 1;
+                $score += 2;
                 break;
         }
         //重要度
@@ -58,7 +56,7 @@ class Task extends Model
         //タスク種類
         switch ($this->type) {
             case '個人':
-                $score *= 1;
+                $score *= 2;
                 break;
             case '共有':
                 $score *= 2;
@@ -68,6 +66,26 @@ class Task extends Model
                 break;
         }
 
-        return round($score);
+        // ペナルティの計算
+        if ($this->deadline) {
+            $deadline = Carbon::parse($this->deadline);
+            if (now()->isAfter($deadline)) { // 締め切りを過ぎている場合
+                $daysOverdue = now()->diffInDays($deadline, false); // 超過日数を計算（負の値）
+
+                if ($daysOverdue < 0) {
+                    $penaltyDays = abs($daysOverdue); // 超過日数を取得
+                    $score -= ($penaltyDays - 1) * 2; // 超過日数×2のペナルティ
+                }
+            }
+        }
+
+        return max(round($score), 0); // スコアは最低0
+    }
+
+    //中間テーブルの情報を簡単に扱えるようにスコープやリレーションを拡張
+    public function userStatus()
+    {
+        return $this->belongsToMany(User::class, 'task_user')
+            ->withPivot('status', 'completed_at', 'completed_by');
     }
 }

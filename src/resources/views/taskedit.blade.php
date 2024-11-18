@@ -23,9 +23,9 @@
                         <div class="mb-3">
                             <label for="status" class="form-label">ステータス</label>
                             <select class="form-select" id="status" name="status" required>
-                                <option value="未着手" {{ $task->status == '未着手' ? 'selected' : '' }}>未着手</option>
-                                <option value="進行中" {{ $task->status == '進行中' ? 'selected' : '' }}>進行中</option>
-                                <option value="完了" {{ $task->status == '完了' ? 'selected' : '' }}>完了</option>
+                                <option value="未着手" {{ $userStatus->status == '未着手' ? 'selected' : '' }}>未着手</option>
+                                <option value="進行中" {{ $userStatus->status == '進行中' ? 'selected' : '' }}>進行中</option>
+                                <option value="完了" {{ $userStatus->status == '完了' ? 'selected' : '' }}>完了</option>
                             </select>
                         </div>
 
@@ -131,7 +131,6 @@
             </div>
         </div>
     </div>
-
 </x-app-layout>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"

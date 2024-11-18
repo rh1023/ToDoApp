@@ -16,8 +16,19 @@ return new class extends Migration
             $table->foreignId('task_id')->constrained()->onDelete('cascade');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('status')->default('未着手');
-            $table->timestamp('completed_at')->nullable();
+            $table->timestamp('completed_at')->nullable(); // 完了日時
             $table->timestamps();
+            $table->softDeletes();
+
+            // 進行中のユーザー（進捗管理）
+            $table->unsignedBigInteger('progress_by')->nullable(); // 進行中
+            $table->foreign('progress_by')->references('id')->on('users')->onDelete('set null'); // 外部キー制約
+
+            // 完了したユーザー（unsignedBigIntegerに変更）
+            $table->unsignedBigInteger('completed_by')->nullable(); // unsignedBigIntegerに変更
+            $table->foreign('completed_by')->references('id')->on('users')->onDelete('set null'); // 外部キー制約
+
+            $table->integer('score')->default(0); // デフォルト値は0
         });
     }
 
