@@ -14,7 +14,9 @@ class TaskController extends Controller
     //タスク一覧画面
     public function show()
     {
-        $userId = Auth::id(); // ログインユーザーIDを取得
+        // ログインユーザーIDを取得
+        $userId = Auth::id();
+
         // ユーザーに関連するタスクを取得
         $tasks = Task::with(['users' => function ($query) use ($userId) {
             $query->where('user_id', $userId); // ログインユーザーの進捗状況のみ取得
@@ -42,22 +44,29 @@ class TaskController extends Controller
                             });
                     });
             })
-            ->sortable()->get();
+            ->sortable()
+            ->get();
+
         // 日付フォーマットの設定と進捗ステータスの割り当て
         foreach ($tasks as $task) {
             $task->formatted_deadline = $task->deadline ? Carbon::parse($task->deadline)->format('Y年n月j日') : null;
         }
+
+        // tasklistビューにタスクを渡す
         return view('tasklist', compact('tasks'));
     }
+
+
 
     //タスク追加画面
     public function create()
     {
+
         $users = User::all(); // 全ユーザー取得
         return view('taskadd', compact('users'));
     }
 
-    //タスクの追加保存
+    //タスクの保存処理
     public function store(Request $request)
     {
         //バリデーション
@@ -69,7 +78,7 @@ class TaskController extends Controller
                 'deadline' => 'nullable|date',
                 'repeat' => 'nullable|string|max:255',
                 'detail' => 'nullable|string',
-                'type' => 'required|string|in:個人,共有,任意',
+                'type' => 'required|string|in:個人,共有,任意', // タイプのバリデーションを追加
                 'user_ids' => 'nullable|array', // 共有タスクに関連するユーザーIDの配列
                 'user_ids.*' => 'exists:users,id', // ユーザーIDが存在するか確認
             ]
@@ -83,6 +92,7 @@ class TaskController extends Controller
                 'category' => $request->category,
                 'type' => $request->type,
                 'important' => $request->important,
+                // 'status' => '未着手',
                 'status' => $request->status,
                 'deadline' => $request->deadline,
                 'repeat' => $request->repeat,
@@ -95,15 +105,31 @@ class TaskController extends Controller
         $task->score = $task->calculateScore();
         $task->save();
 
-        // 共有タスクを全員に作成
+
+
+        // 共有タスク全員作成
+        // if ($task->type === '共有') {
+        //     $allUserIds = User::pluck('id')->toArray(); // 全ユーザーのIDを取得
+        //     foreach ($allUserIds as $userId) {
+        //         $task->users()->attach($userId, ['status' => '未着手']);
+        //     }
+        // }
+
         if ($task->type === '共有') {
             $allUserIds = User::pluck('id')->toArray(); // 全ユーザーのIDを取得
             foreach ($allUserIds as $userId) {
-                $task->users()->attach($userId, ['status' => '未着手']);
+                $task->users()->attach($userId, [
+                    'status' => '未着手',
+                    'score' => $task->calculateScore(), // スコアを中間テーブルに保存
+                ]);
             }
         }
+
         return redirect()->route('tasklist.show')->with('success', 'タスクが追加されました');
     }
+
+
+
 
     //タスク詳細
     public function detail($id)
@@ -111,6 +137,7 @@ class TaskController extends Controller
         $task = Task::findOrFail($id);
         return view('taskdetail', compact('task'));
     }
+
 
     //タスク編集
     public function edit($id)
@@ -122,23 +149,29 @@ class TaskController extends Controller
             if (!$task->userStatus->contains('id', Auth::id())) {
                 abort(403, 'このタスクを編集する権限がありません。');
             }
+
             // 共有タスクの場合、中間テーブルのデータを取得
             $userStatus = $task->userStatus->firstWhere('id', Auth::id())->pivot;
         } elseif ($task->type === '個人' || $task->type === '任意') {
             if ($task->user_id !== Auth::id()) {
                 abort(403, 'このタスクを編集する権限がありません。');
             }
+
             // 個人タスクまたは任意タスクの場合、直接タスクのステータスを使用
             $userStatus = (object) [
                 'status' => $task->status,
                 'completed_at' => $task->updated_at, // 任意で`completed_at`を設定
             ];
         }
+
         return view('taskedit', [
             'task' => $task,
             'userStatus' => $userStatus,
         ]);
     }
+
+
+
 
     public function update(Request $request, $id)
     {
@@ -153,7 +186,7 @@ class TaskController extends Controller
             'repeat' => 'nullable|string|max:255',
             'detail' => 'nullable|string',
             'status' => 'required|string|max:255',
-            'type' => 'required|string|in:個人,共有,任意',
+            'type' => 'required|string|in:個人,共有,任意', // typeを明示的にバリデート
         ]);
 
         $oldType = $task->type;
@@ -188,16 +221,33 @@ class TaskController extends Controller
         }
 
         // タスクが「完了」状態に変更された場合の処理
+        // if ($oldStatus !== '完了' && $newStatus === '完了') {
+        //     // 中間テーブルで完了状況とスコアを更新
+        //     $task->users()->updateExistingPivot(Auth::id(), [
+        //         'status' => '完了',
+        //         'completed_at' => now(),
+        //         'completed_by' => Auth::id(),
+        //         'score' => $task->calculateScore(), // スコアを計算して保存
+        //     ]);
+
+        //     return redirect()->route('tasklist.show')->with('success', 'タスクが完了し、スコアが付与されました。');
+        // }
+
+        // タスクが「完了」状態に変更された場合の処理
         if ($oldStatus !== '完了' && $newStatus === '完了') {
             // 中間テーブルで完了状況とスコアを更新
             $task->users()->updateExistingPivot(Auth::id(), [
                 'status' => '完了',
                 'completed_at' => now(),
                 'completed_by' => Auth::id(),
-                'score' => $task->calculateScore(), // スコアを計算して保存処理
+                'score' => $task->calculateScore(), // スコアを計算して保存
             ]);
+            // tasksテーブルの`completed_by`を更新
+            $task->completed_by = Auth::id();
+            $task->save();
             return redirect()->route('tasklist.show')->with('success', 'タスクが完了し、スコアが付与されました。');
         }
+
 
         // タスクが共有タスクの場合、中間テーブルを更新
         if ($newType === '共有') {

@@ -27,8 +27,6 @@ return new class extends Migration
             // 完了したユーザー（unsignedBigIntegerに変更）
             $table->unsignedBigInteger('completed_by')->nullable(); // unsignedBigIntegerに変更
             $table->foreign('completed_by')->references('id')->on('users')->onDelete('set null'); // 外部キー制約
-
-            $table->integer('score')->default(0); // デフォルト値は0
         });
     }
 

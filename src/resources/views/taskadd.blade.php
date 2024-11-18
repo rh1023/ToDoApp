@@ -89,12 +89,42 @@
                             </div>
                         </div>
 
+                        {{-- <br>
+                        <div class="form-group">
+                            <label for="user_ids">共有タスクの対象ユーザー</label>
+                            <select class="form-control" id="user_ids" name="user_ids[]" multiple>
+                                @foreach ($users as $user)
+                                    <option value="{{ $user->id }}">{{ $user->name }}</option>
+                                @endforeach
+                            </select>
+                        </div> --}}
+
+
+
+
                         <br>
 
                         <div class="form-group">
                             <label for="deadline">期日</label>
                             <input type="date" class="form-control" id="deadline" name="deadline">
                         </div>
+
+                        <br>
+
+                        {{-- <div class = "form-group">
+                            <label for = "repeat">繰り返し設定</label>
+                            <select class="form-control" id="repeat" name="repeat">
+                                <option value="">繰り返しなし</option>
+                                <option value="daily">毎日</option>
+                                <option value="weekly:1">毎週月曜日</option>
+                                <option value="weekly:2">毎週火曜日</option>
+                                <option value="weekly:3">毎週水曜日</option>
+                                <option value="weekly:4">毎週木曜日</option>
+                                <option value="weekly:5">毎週金曜日</option>
+                                <option value="weekly:6">毎週土曜日</option>
+                                <option value="weekly:0">毎週日曜日</option>
+                            </select>
+                        </div> --}}
 
                         <br>
 
@@ -106,7 +136,15 @@
                         <br>
 
                         <button type="submit" class = "btn btn-primary">保存</button>
+
                     </form>
+
+                    <br>
+
+                    {{-- <form action="{{ route('tasklist.show') }}">
+                        <input type="submit" class="btn btn-primary" value="戻る">
+                    </form> --}}
+
                 </div>
             </div>
         </div>

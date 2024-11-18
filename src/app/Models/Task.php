@@ -32,7 +32,7 @@ class Task extends Model
         //カテゴリ
         switch ($this->category) {
             case '家事':
-                $score += 3;
+                $score += 4;
                 break;
             case '仕事':
                 $score += 3;
@@ -41,7 +41,7 @@ class Task extends Model
                 $score += 5;
                 break;
             case '自己研鑽':
-                $score += 4;
+                $score += 5;
                 break;
             case '趣味':
                 $score += 2;
@@ -79,8 +79,11 @@ class Task extends Model
             }
         }
 
+        // return round($score);
         return max(round($score), 0); // スコアは最低0
     }
+
+
 
     //中間テーブルの情報を簡単に扱えるようにスコープやリレーションを拡張
     public function userStatus()
