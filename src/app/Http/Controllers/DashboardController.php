@@ -12,53 +12,64 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        // 今日の日付を取得
-        $today = Carbon::now()->format('Y年 m月 d日');
+        $userId = Auth::id();
 
-        // 本日のスコア（完了タスクの合計）
-        $todayScore = Task::where('user_id', Auth::id())
+        // 今日の日付を取得
+        $today = Carbon::now()->format('Y年m月d日');
+
+        // 本日のスコア（個人、任意、共有タスクの合計）
+        $todayScore = Task::with(['users' => function ($query) use ($userId) {
+            $query->where('user_id', $userId)
+                ->where('status', '完了');
+        }])
+            ->where(function ($query) use ($userId) {
+                $query->where('user_id', $userId) // 個人タスク
+                    ->orWhereHas('users', function ($q) use ($userId) {
+                        $q->where('user_id', $userId) // 任意・共有タスク
+                            ->where('status', '完了');
+                    });
+            })
             ->whereDate('updated_at', Carbon::today())
-            ->where('status', '完了')
             ->sum('score');
 
-        // 各ステータスごとのタスクを取得
-        $inProgressTasks = Task::where('user_id', Auth::id())
+        // ステータスごとのタスクを取得
+        $inProgressTasks = Task::with('users')
+            ->where(function ($query) use ($userId) {
+                $query->where('user_id', $userId)
+                    ->orWhereHas('users', function ($q) use ($userId) {
+                        $q->where('user_id', $userId);
+                    });
+            })
             ->where('status', '進行中')
-            // ->whereDate('deadline', Carbon::today())
-            // ->select('title', 'detail') // 取り出すカラムを指定
             ->get();
-        $notStartedTasks = Task::where('user_id', Auth::id())
+
+        $notStartedTasks = Task::with('users')
+            ->where(function ($query) use ($userId) {
+                $query->where('user_id', $userId)
+                    ->orWhereHas('users', function ($q) use ($userId) {
+                        $q->where('user_id', $userId);
+                    });
+            })
             ->where('status', '未着手')
-            // ->whereDate('deadline', Carbon::today())
             ->get();
-        $completedTasks = Task::where('user_id', Auth::id())
+
+        $completedTasks = Task::with('users')
+            ->where(function ($query) use ($userId) {
+                $query->where('user_id', $userId)
+                    ->orWhereHas('users', function ($q) use ($userId) {
+                        $q->where('user_id', $userId);
+                    });
+            })
             ->where('status', '完了')
             ->whereDate('updated_at', Carbon::today())
             ->get();
-
-        // ユーザーの情報の取得
-        $users = User::select('name')->get();
-
-        // 各ユーザーごとに達成タスクのスコアを計算
-        foreach ($users as $user) {
-            $user->todayScore = Task::where('user_id', $user->id)
-                ->whereDate('updated_at', Carbon::today())
-                ->where('status', '完了')
-                ->sum('score');
-
-            // 進行中タスクを取得
-            $user->inProgressTasks = Task::where('user_id', $user->id)
-                ->where('status', '進行中')
-                ->get();
-        }
 
         return view('dashboard', compact(
             'today',
             'todayScore',
             'inProgressTasks',
             'notStartedTasks',
-            'completedTasks',
-            'users'
+            'completedTasks'
         ));
     }
 }

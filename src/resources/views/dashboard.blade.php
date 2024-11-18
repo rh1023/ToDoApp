@@ -18,6 +18,7 @@
                     <div class="container container-m">
                         <div class="card-deck">
 
+                            <!-- 本日の日付とスコア -->
                             <div class="row">
                                 <div class="col-sm-5">
                                     <div class="card">
@@ -26,13 +27,8 @@
                                             <p class="card-text">{{ $today }}</p>
                                         </div>
                                     </div>
-
                                 </div>
-
-                                <div class="col-sm-2">
-
-                                </div>
-
+                                <div class="col-sm-2"></div>
                                 <div class="col-sm-5">
                                     <div class="card">
                                         <div class="card-body">
@@ -40,12 +36,12 @@
                                             <p class="card-text">{{ $todayScore }}</p>
                                         </div>
                                     </div>
-
                                 </div>
                             </div>
 
                             <br>
 
+                            <!-- 進行中タスク -->
                             <div class="card">
                                 <div class="card-body">
                                     <h5 class="card-title">進行中タスク</h5>
@@ -54,14 +50,15 @@
                                             <thead>
                                                 <tr>
                                                     <th>タスク</th>
-                                                    {{-- <th>詳細</th> --}}
+                                                    <th>締め切り</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 @foreach ($inProgressTasks as $task)
                                                     <tr>
                                                         <td>{{ $task->title }}</td>
-                                                        {{-- <td>{{ $task->detail }}</td> --}}
+                                                        <td>{{ $task->deadline ? Carbon\Carbon::parse($task->deadline)->format('Y年m月d日') : '未設定' }}
+                                                        </td>
                                                     </tr>
                                                 @endforeach
                                             </tbody>
@@ -72,6 +69,7 @@
 
                             <br>
 
+                            <!-- 未着手タスク -->
                             <div class="card">
                                 <div class="card-body">
                                     <h5 class="card-title">未着手タスク</h5>
@@ -80,14 +78,15 @@
                                             <thead>
                                                 <tr>
                                                     <th>タスク</th>
-                                                    {{-- <th>詳細</th> --}}
+                                                    <th>締め切り</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 @foreach ($notStartedTasks as $task)
                                                     <tr>
                                                         <td>{{ $task->title }}</td>
-                                                        {{-- <td>{{ $task->detail }}</td> --}}
+                                                        <td>{{ $task->deadline ? Carbon\Carbon::parse($task->deadline)->format('Y年m月d日') : '未設定' }}
+                                                        </td>
                                                     </tr>
                                                 @endforeach
                                             </tbody>
@@ -98,6 +97,7 @@
 
                             <br>
 
+                            <!-- 完了タスク -->
                             <div class="card">
                                 <div class="card-body">
                                     <h5 class="card-title">完了タスク</h5>
@@ -106,14 +106,20 @@
                                             <thead>
                                                 <tr>
                                                     <th>タスク</th>
-                                                    {{-- <th>詳細</th> --}}
+                                                    <th>完了日</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 @foreach ($completedTasks as $task)
                                                     <tr>
                                                         <td>{{ $task->title }}</td>
-                                                        {{-- <td>{{ $task->detail }}</td> --}}
+                                                        <td>
+                                                            @if ($task->pivot && $task->pivot->completed_at)
+                                                                {{ Carbon\Carbon::parse($task->pivot->completed_at)->format('Y年m月d日') }}
+                                                            @else
+                                                                未設定
+                                                            @endif
+                                                        </td>
                                                     </tr>
                                                 @endforeach
                                             </tbody>
@@ -121,6 +127,8 @@
                                     </div>
                                 </div>
                             </div>
+
+
                         </div>
                     </div>
                 </div>

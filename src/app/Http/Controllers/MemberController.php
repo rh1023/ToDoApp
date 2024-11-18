@@ -13,26 +13,55 @@ class MemberController extends Controller
     public function show()
     {
         $members = User::all();
-        // dd($members);
-        foreach ($members as $member) {
-            // 各メンバーの本日のスコア計算
-            $member->todayScore = Task::where('user_id', $member->id)
-                ->whereDate('updated_at', Carbon::today())
-                ->where('status', '完了')
-                ->sum('score'); // sum()メソッドを使用してスコアを合計
 
-            // 各メンバーの進行中タスクを取得
-            $member->inProgressTasks = Task::where('user_id', $member->id)
+        foreach ($members as $member) {
+            $memberId = $member->id;
+
+            // 各メンバーのスコア計算（個人、任意、共有タスク）
+            $member->todayScore = Task::with(['users' => function ($query) use ($memberId) {
+                $query->where('user_id', $memberId)
+                    ->where('status', '完了');
+            }])
+                ->where(function ($query) use ($memberId) {
+                    $query->where('user_id', $memberId) // 個人タスク
+                        ->orWhereHas('users', function ($q) use ($memberId) {
+                            $q->where('user_id', $memberId) // 任意・共有タスク
+                                ->where('status', '完了');
+                        });
+                })
+                ->whereDate('updated_at', Carbon::today())
+                ->sum('score');
+
+            // 進行中タスク
+            $member->inProgressTasks = Task::with('users')
+                ->where(function ($query) use ($memberId) {
+                    $query->where('user_id', $memberId)
+                        ->orWhereHas('users', function ($q) use ($memberId) {
+                            $q->where('user_id', $memberId);
+                        });
+                })
                 ->where('status', '進行中')
                 ->get();
 
-            // 各メンバーの未着手タスクを取得
-            $member->notStartedTasks = Task::where('user_id', $member->id)
+            // 未着手タスク
+            $member->notStartedTasks = Task::with('users')
+                ->where(function ($query) use ($memberId) {
+                    $query->where('user_id', $memberId)
+                        ->orWhereHas('users', function ($q) use ($memberId) {
+                            $q->where('user_id', $memberId);
+                        });
+                })
                 ->where('status', '未着手')
                 ->get();
 
-            // 各メンバーの完了タスクを取得（本日のみ）
-            $member->completedTasks = Task::where('user_id', $member->id)
+            // 完了タスク
+            $member->completedTasks = Task::with('users')
+                ->where(function ($query) use ($memberId) {
+                    $query->where('user_id', $memberId)
+                        ->orWhereHas('users', function ($q) use ($memberId) {
+                            $q->where('user_id', $memberId);
+                        });
+                })
                 ->where('status', '完了')
                 ->whereDate('updated_at', Carbon::today())
                 ->get();
