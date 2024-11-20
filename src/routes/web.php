@@ -5,7 +5,6 @@ use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\MemberController;
-use App\Http\Controllers\GroupController;
 use App\Http\Controllers\DashboardController;
 
 use Illuminate\Support\Facades\Route;
@@ -54,6 +53,7 @@ Route::get('/memberlist', [MemberController::class, 'show'])->name('memberlist.s
 //カレンダー
 Route::get('/historycalendar', [CalendarController::class, 'history'])->name('historycalendar.history');
 Route::get('/calendar/history', [CalendarController::class, 'history']);
+
 // カレンダー履歴一覧
 Route::get('/historycalendar', [CalendarController::class, 'index'])->name('historycalendar.index');
 

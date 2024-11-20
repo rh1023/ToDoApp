@@ -51,7 +51,7 @@ class CalendarController extends Controller
     {
         $userId = Auth::id();
 
-        // 指定日の完了タスクを取得
+        // 完了したタスクを取得
         $tasks = Task::with(['users' => function ($query) use ($userId, $date) {
             $query->where('user_id', $userId)
                 ->where('status', '完了')

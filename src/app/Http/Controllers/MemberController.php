@@ -18,17 +18,17 @@ class MemberController extends Controller
             $memberId = $member->id;
 
             // 各メンバーのスコア計算（個人、任意、共有タスク）
-            $member->todayScore = Task::with(['users' => function ($query) use ($memberId) {
-                $query->where('user_id', $memberId)
-                    ->where('status', '完了');
-            }])
-                ->where(function ($query) use ($memberId) {
-                    $query->where('user_id', $memberId) // 個人タスク
-                        ->orWhereHas('users', function ($q) use ($memberId) {
-                            $q->where('user_id', $memberId) // 任意・共有タスク
-                                ->where('status', '完了');
-                        });
-                })
+            $member->todayScore = Task::where(function ($query) use ($memberId) {
+                $query->where(function ($q) use ($memberId) {
+                    $q->where('user_id', $memberId) // 個人タスク
+                        ->whereNotNull('completed_by') // 完了済み
+                        ->where('completed_by', $memberId);
+                })->orWhereHas('users', function ($q) use ($memberId) {
+                    $q->where('user_id', $memberId) // 任意・共有タスク
+                        ->where('status', '完了')
+                        ->whereNotNull('task_user.completed_by');
+                });
+            })
                 ->whereDate('updated_at', Carbon::today())
                 ->sum('score');
 

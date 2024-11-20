@@ -130,19 +130,13 @@ class TaskController extends Controller
     {
         $task = Task::with(['userStatus'])->findOrFail($id);
 
-        // アクセス制御
+        // 中間テーブルのデータを取得
+        $userStatus = null;
+
         if ($task->type === '共有') {
-            if (!$task->userStatus->contains('id', Auth::id())) {
-                abort(403, 'このタスクを編集する権限がありません。');
-            }
-
             // 共有タスクの場合、中間テーブルのデータを取得
-            $userStatus = $task->userStatus->firstWhere('id', Auth::id())->pivot;
+            $userStatus = $task->userStatus->firstWhere('id', Auth::id())?->pivot;
         } elseif ($task->type === '個人' || $task->type === '任意') {
-            if ($task->user_id !== Auth::id()) {
-                abort(403, 'このタスクを編集する権限がありません。');
-            }
-
             // 個人タスクまたは任意タスクの場合、直接タスクのステータスを使用
             $userStatus = (object) [
                 'status' => $task->status,
@@ -157,6 +151,7 @@ class TaskController extends Controller
     }
 
 
+    // タスクの更新
     public function update(Request $request, $id)
     {
         $task = Task::findOrFail($id);
@@ -173,16 +168,14 @@ class TaskController extends Controller
             'type' => 'required|string|in:個人,共有,任意',
         ]);
 
-        $oldType = $task->type;
         $oldStatus = $task->status;
-        $newType = $request->type;
         $newStatus = $request->status;
 
         // タスクデータの更新
         $task->update([
             'title' => $request->title,
             'category' => $request->category,
-            'type' => $newType,
+            'type' => $request->type,
             'important' => $request->important,
             'status' => $newStatus,
             'deadline' => $request->deadline,
@@ -190,51 +183,37 @@ class TaskController extends Controller
             'detail' => $request->detail,
         ]);
 
-        // タスクが「個人」から「共有」に変更された場合
-        if ($oldType === '個人' && $newType === '共有') {
-            $allUserIds = User::pluck('id')->toArray(); // 全ユーザーのIDを取得
-            foreach ($allUserIds as $userId) {
-                $task->users()->attach($userId, ['status' => '未着手']); // 中間テーブルにデータを追加
-            }
-        }
-
-        // タスクが「進行中」状態に変更された場合の処理
-        if ($oldStatus !== '進行中' && $newStatus === '進行中') {
-            $task->progress_by = Auth::id();
+        // ステータスが「完了」以外に変更された場合
+        if ($newStatus !== '完了') {
+            $task->completed_by = null; // `completed_by` をリセット
             $task->save();
-        }
 
-        // タスクが「完了」状態に変更された場合の処理
-        if ($oldStatus !== '完了' && $newStatus === '完了') {
-            // 中間テーブルで完了状況とスコアを更新
-            $task->users()->updateExistingPivot(Auth::id(), [
-                'status' => '完了',
-                'completed_at' => now(),
-                'completed_by' => Auth::id(),
-                'score' => $task->calculateScore(), // スコアを計算して保存
-            ]);
-            // tasksテーブルの`completed_by`を更新
-            $task->completed_by = Auth::id();
-            $task->save();
-            return redirect()->route('tasklist.show')->with('success', 'タスクが完了し、スコアが付与されました。');
-        }
-
-        // タスクが共有タスクの場合、中間テーブルを更新
-        if ($newType === '共有') {
-            $allUserIds = User::pluck('id')->toArray(); // 全ユーザーIDを取得
-            foreach ($allUserIds as $userId) {
-                $task->users()->wherePivot('user_id', Auth::id())->updateExistingPivot(Auth::id(), [
-                    'status' => '完了',
-                    'completed_at' => now(),
-                    'completed_by' => Auth::id(),
-                    'score' => $task->calculateScore(),
+            // 共有タスクの場合、中間テーブルも更新
+            if ($task->type === '共有') {
+                $task->users()->updateExistingPivot($userId, [
+                    'status' => $newStatus,
+                    'completed_at' => null, // 完了日時をリセット
+                    'completed_by' => null, // 完了者をリセット
+                    'score' => 0, // スコアもリセット
                 ]);
             }
         }
 
-        // タスクのスコア更新
-        $task->score = $task->calculateScore();
-        $task->save();
+        // ステータスが「完了」に変更された場合
+        if ($newStatus === '完了') {
+            $task->completed_by = $userId;
+            $task->save();
+
+            // 共有タスクの場合、中間テーブルも更新
+            if ($task->type === '共有') {
+                $task->users()->updateExistingPivot($userId, [
+                    'status' => '完了',
+                    'completed_at' => now(),
+                    'completed_by' => $userId,
+                    'score' => $task->calculateScore(), // スコアを計算して保存
+                ]);
+            }
+        }
 
         return redirect()->route('tasklist.show')->with('success', 'タスクが更新されました');
     }

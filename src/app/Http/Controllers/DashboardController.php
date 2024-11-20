@@ -18,18 +18,17 @@ class DashboardController extends Controller
         $today = Carbon::now()->format('Y年m月d日');
 
         // 本日のスコア（個人、任意、共有タスクの合計）
-        $todayScore = Task::with(['users' => function ($query) use ($userId) {
-            $query->where('user_id', $userId)
-                ->where('status', '完了');
-        }])
-            ->where(function ($query) use ($userId) {
-                $query->where('user_id', $userId) // 個人タスク
-                    ->orWhereHas('users', function ($q) use ($userId) {
-                        $q->where('user_id', $userId) // 任意・共有タスク
-                            ->where('status', '完了');
-                    });
-            })
-            ->whereDate('updated_at', Carbon::today())
+        $todayScore = Task::where(function ($query) use ($userId) {
+            $query->where(function ($q) use ($userId) {
+                $q->where('user_id', $userId) // 個人タスク
+                    ->whereNotNull('completed_by') // 完了済み
+                    ->where('completed_by', $userId);
+            })->orWhereHas('users', function ($q) use ($userId) {
+                $q->where('user_id', $userId) // 任意・共有タスク
+                    ->where('status', '完了')
+                    ->whereNotNull('task_user.completed_by');
+            });
+        })->whereDate('updated_at', Carbon::today())
             ->sum('score');
 
         // ステータスごとのタスクを取得

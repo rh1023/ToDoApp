@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Kyslik\ColumnSortable\Sortable;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 class Task extends Model
 {
@@ -29,7 +30,7 @@ class Task extends Model
     {
         $score = 0;
 
-        //カテゴリ
+        // カテゴリによるスコア加算
         switch ($this->category) {
             case '家事':
                 $score += 4;
@@ -50,10 +51,11 @@ class Task extends Model
                 $score += 2;
                 break;
         }
-        //重要度
+
+        // 重要度の倍率
         $score *= $this->important;
 
-        //タスク種類
+        // タスク種類の倍率
         switch ($this->type) {
             case '個人':
                 $score *= 2;
@@ -69,17 +71,17 @@ class Task extends Model
         // ペナルティの計算
         if ($this->deadline) {
             $deadline = Carbon::parse($this->deadline);
+
             if (now()->isAfter($deadline)) { // 締め切りを過ぎている場合
-                $daysOverdue = now()->diffInDays($deadline, false); // 超過日数を計算（負の値）
+                $daysOverdue = now()->diffInDays($deadline, false); // 負の値も許容
 
                 if ($daysOverdue < 0) {
-                    $penaltyDays = abs($daysOverdue); // 超過日数を取得
-                    $score -= ($penaltyDays - 1) * 2; // 超過日数×2のペナルティ
+                    $penaltyDays = abs(floor($daysOverdue)); // 小数を切り捨てて絶対値を取得
+                    $score -= ($penaltyDays - 1) * 2; // 超過日数×2のペナルティ(当日もカウントされるので日数を-1)
                 }
             }
         }
 
-        // return round($score);
         return max(round($score), 0); // スコアは最低0
     }
 
