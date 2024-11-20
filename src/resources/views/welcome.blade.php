@@ -18,14 +18,14 @@
         <p class="hero-subtext">
             『 Boost（向上させる）』と『 Up（上昇）』の２つを組み合わせた、ユーザーの成長やモチベーションを高めるアプリです。
             <br>
-            日常生活での健康習慣や家事、仕事などのタスクを簡単に管理
+            日常生活での健康習慣や家事、仕事などのタスクを簡単に管理できます。
         </p>
 
         <div class="features">
             <h3>BoostUpとは？</h3>
-            <p><strong>簡単操作:</strong> シンプルでわかりやすいインターフェース。</p>
-            <p><strong>豊富な機能:</strong> タスク管理、進捗追跡、仲間と簡単にタスクを共有。</p>
-            <p><strong>モチベーションの向上:</strong> 各タスクにスコア静を導入し競争心を高める。</p>
+            <p><strong>簡単操作：</strong> シンプルでわかりやすいインターフェース。</p>
+            <p><strong>豊富な機能：</strong> タスク管理、進捗追跡、仲間と簡単にタスクを共有。</p>
+            <p><strong>モチベーションの向上：</strong> 各タスクにスコア制を導入し競争心を高める。</p>
         </div>
 
         @if (Route::has('login'))
@@ -44,7 +44,7 @@
 
     <footer>
         Laravel v{{ Illuminate\Foundation\Application::VERSION }} (PHP v{{ PHP_VERSION }}) &copy; 2024 ToDoアプリ .
-        BoostUP.
+        BoostUp. RH
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

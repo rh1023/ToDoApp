@@ -23,7 +23,7 @@
 
                     <div class="mb-3">
                         <label for="title" class="form-label">タスク名</label>
-                        <input type="text" class="form-control" id="title" name="title" placeholder="タスク名を入力してください"
+                        <input type="text" class="form-control" id="title" name="title" placeholder="20文字以内でタスク名を入力してください"
                             required>
                     </div>
 

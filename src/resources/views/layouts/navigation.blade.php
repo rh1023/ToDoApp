@@ -47,7 +47,7 @@
                 </div>
             </div>
 
-            <!-- Log Out Button -->
+            <!-- ログアウト -->
             <div class="hidden sm:flex sm:items-center sm:space-x-6">
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
