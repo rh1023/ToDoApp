@@ -1,48 +1,33 @@
 <section>
-    <header>
-        <h2 class="text-lg font-medium text-gray-900">
-            {{ __('パスワードの更新') }}
-        </h2>
-
-        <p class="mt-1 text-sm text-gray-600">
-            {{ __('安全を保つために、アカウントで長くてランダムなパスワードを使用していることを確認してください。') }}
-        </p>
-    </header>
-
-    <form method="post" action="{{ route('password.update') }}" class="mt-6 space-y-6">
+    <form method="post" action="{{ route('password.update') }}" class="mb-3">
         @csrf
         @method('put')
 
-        <div>
-            <x-input-label for="update_password_current_password" :value="__('現在のパスワード')" />
-            <x-text-input id="update_password_current_password" name="current_password" type="password" class="mt-1 block w-full" autocomplete="current-password" />
-            <x-input-error :messages="$errors->updatePassword->get('current_password')" class="mt-2" />
+        <div class="mb-3">
+            <label for="current_password" class="form-label">現在のパスワード</label>
+            <input type="password" id="current_password" name="current_password" class="form-control" required>
+            @error('current_password')
+                <div class="text-danger">{{ $message }}</div>
+            @enderror
         </div>
 
-        <div>
-            <x-input-label for="update_password_password" :value="__('新しいパスワード')" />
-            <x-text-input id="update_password_password" name="password" type="password" class="mt-1 block w-full" autocomplete="new-password" />
-            <x-input-error :messages="$errors->updatePassword->get('password')" class="mt-2" />
+        <div class="mb-3">
+            <label for="password" class="form-label">新しいパスワード</label>
+            <input type="password" id="password" name="password" class="form-control" required>
+            @error('password')
+                <div class="text-danger">{{ $message }}</div>
+            @enderror
         </div>
 
-        <div>
-            <x-input-label for="update_password_password_confirmation" :value="__('確認用パスワード')" />
-            <x-text-input id="update_password_password_confirmation" name="password_confirmation" type="password" class="mt-1 block w-full" autocomplete="new-password" />
-            <x-input-error :messages="$errors->updatePassword->get('password_confirmation')" class="mt-2" />
+        <div class="mb-3">
+            <label for="password_confirmation" class="form-label">確認用パスワード</label>
+            <input type="password" id="password_confirmation" name="password_confirmation" class="form-control"
+                required>
+            @error('password_confirmation')
+                <div class="text-danger">{{ $message }}</div>
+            @enderror
         </div>
 
-        <div class="flex items-center gap-4">
-            <x-primary-button>{{ __('保存') }}</x-primary-button>
-
-            @if (session('status') === 'password-updated')
-                <p
-                    x-data="{ show: true }"
-                    x-show="show"
-                    x-transition
-                    x-init="setTimeout(() => show = false, 2000)"
-                    class="text-sm text-gray-600"
-                >{{ __('保存しました。') }}</p>
-            @endif
-        </div>
+        <button type="submit" class="btn btn-success">保存</button>
     </form>
 </section>

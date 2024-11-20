@@ -1,132 +1,113 @@
-<head>
-    <title>ダッシュボード</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
-</head>
+@extends('layouts.app')
 
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('ダッシュボード') }}
-        </h2>
-    </x-slot>
+@section('title', 'ダッシュボード')
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900">
-                    <div class="container container-m">
-                        <div class="card-deck">
+@section('content')
+    <div class="container">
+        <div class="row mb-4">
+            <!-- 本日の日付 -->
+            <div class="col-md-6">
+                <div class="card text-white bg-primary shadow-lg h-100">
+                    <div class="card-header text-center">
+                        <h5 class="m-0">📅 本日の日付</h5>
+                    </div>
+                    <div class="card-body d-flex align-items-center justify-content-center">
+                        <h1 class="card-title display-3 font-weight-bold">{{ $today }}</h1>
+                    </div>
+                </div>
+            </div>
+            <!-- 本日のスコア -->
+            <div class="col-md-6">
+                <div class="card text-dark bg-warning shadow-lg h-100">
+                    <div class="card-header text-center">
+                        <h5 class="m-0">🏆 本日のスコア</h5>
+                    </div>
+                    <div class="card-body d-flex align-items-center justify-content-center">
+                        <h1 class="card-title display-3 font-weight-bold" style="color: #343a40;">{{ $todayScore }}</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-                            <!-- 本日の日付とスコア -->
-                            <div class="row">
-                                <div class="col-sm-5">
-                                    <div class="card">
-                                        <div class="card-body">
-                                            <h5 class="card-title">本日の日付</h5>
-                                            <p class="card-text">{{ $today }}</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-sm-2"></div>
-                                <div class="col-sm-5">
-                                    <div class="card">
-                                        <div class="card-body">
-                                            <h5 class="card-title">本日のスコア</h5>
-                                            <p class="card-text">{{ $todayScore }}</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+        <!-- タスク一覧 -->
+        <div class="row">
+            <!-- 進行中タスク -->
+            <div class="col-md-4 mb-4">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-warning text-white">進行中タスク</div>
+                    <div class="card-body">
+                        @if ($inProgressTasks->isNotEmpty())
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>タスク</th>
+                                        <th>締め切り</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($inProgressTasks as $task)
+                                        <tr>
+                                            <td>{{ $task->title }}</td>
+                                            <td>{{ $task->deadline ? \Carbon\Carbon::parse($task->deadline)->format('Y年m月d日') : '未設定' }}
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        @else
+                            <p class="text-muted">進行中のタスクはありません。</p>
+                        @endif
+                    </div>
+                </div>
+            </div>
 
-                            <br>
+            <!-- 未着手タスク -->
+            <div class="col-md-4 mb-4">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-danger text-white">未着手タスク</div>
+                    <div class="card-body">
+                        @if ($notStartedTasks->isNotEmpty())
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>タスク</th>
+                                        <th>締め切り</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($notStartedTasks as $task)
+                                        <tr>
+                                            <td>{{ $task->title }}</td>
+                                            <td>{{ $task->deadline ? \Carbon\Carbon::parse($task->deadline)->format('Y年m月d日') : '未設定' }}
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        @else
+                            <p class="text-muted">未着手のタスクはありません。</p>
+                        @endif
+                    </div>
+                </div>
+            </div>
 
-                            <!-- 進行中タスク -->
-                            <div class="card">
-                                <div class="card-body">
-                                    <h5 class="card-title">進行中タスク</h5>
-                                    <div class="container">
-                                        <table class="table">
-                                            <thead>
-                                                <tr>
-                                                    <th>タスク</th>
-                                                    <th>締め切り</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @foreach ($inProgressTasks as $task)
-                                                    <tr>
-                                                        <td>{{ $task->title }}</td>
-                                                        <td>{{ $task->deadline ? Carbon\Carbon::parse($task->deadline)->format('Y年m月d日') : '未設定' }}
-                                                        </td>
-                                                    </tr>
-                                                @endforeach
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <br>
-
-                            <!-- 未着手タスク -->
-                            <div class="card">
-                                <div class="card-body">
-                                    <h5 class="card-title">未着手タスク</h5>
-                                    <div class="container">
-                                        <table class="table">
-                                            <thead>
-                                                <tr>
-                                                    <th>タスク</th>
-                                                    <th>締め切り</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @foreach ($notStartedTasks as $task)
-                                                    <tr>
-                                                        <td>{{ $task->title }}</td>
-                                                        <td>{{ $task->deadline ? Carbon\Carbon::parse($task->deadline)->format('Y年m月d日') : '未設定' }}
-                                                        </td>
-                                                    </tr>
-                                                @endforeach
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <br>
-
-                            <!-- 完了タスク -->
-                            <div class="card">
-                                <div class="card-body">
-                                    <h5 class="card-title">完了タスク</h5>
-                                    <div class="container">
-                                        <table class="table">
-                                            <thead>
-                                                <tr>
-                                                    <th>タスク</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @foreach ($completedTasks as $task)
-                                                    <tr>
-                                                        <td>{{ $task->title }}</td>
-                                                    </tr>
-                                                @endforeach
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+            <!-- 完了タスク -->
+            <div class="col-md-4 mb-4">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-success text-white">完了タスク</div>
+                    <div class="card-body">
+                        @if ($completedTasks->isNotEmpty())
+                            <ul class="list-group">
+                                @foreach ($completedTasks as $task)
+                                    <li class="list-group-item">{{ $task->title }}</li>
+                                @endforeach
+                            </ul>
+                        @else
+                            <p class="text-muted">完了したタスクはありません。</p>
+                        @endif
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</x-app-layout>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous">
-</script>
+@endsection
