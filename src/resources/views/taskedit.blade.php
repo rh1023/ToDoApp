@@ -25,7 +25,7 @@
                     <div class="mb-3">
                         <label for="title" class="form-label">タスク名</label>
                         <input type="text" class="form-control" id="title" name="title" value="{{ $task->title }}"
-                            required>
+                            placeholder="20文字以内でタスク名を入力してください" maxlength="20" required>
                     </div>
 
                     <div class="row">

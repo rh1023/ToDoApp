@@ -32,6 +32,7 @@ class TaskController extends Controller
                         $q->where('type', '任意')
                             ->where(function ($subQuery) use ($userId) {
                                 $subQuery->where('status', '未着手')
+                                    ->orWhere('status', '進行中')
                                     ->orWhere('progress_by', $userId)
                                     ->orWhere('completed_by', $userId);
                             });
@@ -65,10 +66,11 @@ class TaskController extends Controller
         return view('taskadd', compact('users'));
     }
 
+
     //タスクの保存処理
     public function store(Request $request)
     {
-        //バリデーション
+        // バリデーション
         $request->validate(
             [
                 'title' => 'required|string|max:255',
@@ -80,10 +82,11 @@ class TaskController extends Controller
                 'type' => 'required|string|in:個人,共有,任意',
                 'user_ids' => 'nullable|array', // 共有タスクに関連するユーザーIDの配列
                 'user_ids.*' => 'exists:users,id', // ユーザーIDが存在するか確認
+                'status' => 'required|string|in:未着手,進行中,完了'
             ]
         );
 
-        //タスクの作成
+        // タスクの作成
         $task = Task::create(
             [
                 'user_id' => Auth::id(),
@@ -103,12 +106,15 @@ class TaskController extends Controller
         $task->score = $task->calculateScore();
         $task->save();
 
+        // 共有タスクの場合、中間テーブルに登録
         if ($task->type === '共有') {
             $allUserIds = User::pluck('id')->toArray(); // 全ユーザーのIDを取得
             foreach ($allUserIds as $userId) {
                 $task->users()->attach($userId, [
-                    'status' => '未着手',
-                    'score' => $task->calculateScore(), // スコアを中間テーブルに保存
+                    'status' => $task->status === '完了' ? '完了' : '未着手',
+                    'score' => $task->status === '完了' ? $task->calculateScore() : 0,
+                    'completed_at' => $task->status === '完了' ? now() : null,
+                    'completed_by' => $task->status === '完了' ? Auth::id() : null,
                 ]);
             }
         }
@@ -214,6 +220,25 @@ class TaskController extends Controller
                 ]);
             }
         }
+
+        // ステータスが「進行中」に変更された場合
+        if ($newStatus === '進行中') {
+            $task->progress_by = $userId;
+            $task->save();
+
+            // 共有タスクの場合、中間テーブルも更新
+            if ($task->type === '共有') {
+                $task->users()->updateExistingPivot($userId, [
+                    'status' => '進行中',
+                    'progress_by' => $userId,
+                    'score' => $task->calculateScore(), // スコアを計算して保存
+                ]);
+            }
+        }
+
+        // タスクのスコアを計算して保存
+        $task->score = $task->calculateScore();
+        $task->save();
 
         return redirect()->route('tasklist.show')->with('success', 'タスクが更新されました');
     }

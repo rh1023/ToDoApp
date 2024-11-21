@@ -36,7 +36,7 @@
                 <div class="card shadow-sm">
                     <div class="card-header bg-warning text-white">進行中タスク</div>
                     <div class="card-body">
-                        @if ($inProgressTasks->isNotEmpty())
+                        @if ($allInProgressTasks->isNotEmpty())
                             <table class="table table-hover">
                                 <thead>
                                     <tr>
@@ -45,7 +45,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($inProgressTasks as $task)
+                                    @foreach ($allInProgressTasks as $task)
                                         <tr>
                                             <td>{{ $task->title }}</td>
                                             <td>{{ $task->deadline ? \Carbon\Carbon::parse($task->deadline)->format('Y年m月d日') : '未設定' }}
@@ -66,7 +66,7 @@
                 <div class="card shadow-sm">
                     <div class="card-header bg-danger text-white">未着手タスク</div>
                     <div class="card-body">
-                        @if ($notStartedTasks->isNotEmpty())
+                        @if ($allNotStartedTasks->isNotEmpty())
                             <table class="table table-hover">
                                 <thead>
                                     <tr>
@@ -75,7 +75,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($notStartedTasks as $task)
+                                    @foreach ($allNotStartedTasks as $task)
                                         <tr>
                                             <td>{{ $task->title }}</td>
                                             <td>{{ $task->deadline ? \Carbon\Carbon::parse($task->deadline)->format('Y年m月d日') : '未設定' }}
@@ -96,9 +96,9 @@
                 <div class="card shadow-sm">
                     <div class="card-header bg-success text-white">完了タスク</div>
                     <div class="card-body">
-                        @if ($completedTasks->isNotEmpty())
+                        @if ($allCompletedTasks->isNotEmpty())
                             <ul class="list-group">
-                                @foreach ($completedTasks as $task)
+                                @foreach ($allCompletedTasks as $task)
                                     <li class="list-group-item">{{ $task->title }}</li>
                                 @endforeach
                             </ul>

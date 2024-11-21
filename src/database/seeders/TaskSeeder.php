@@ -39,6 +39,20 @@ class TaskSeeder extends Seeder
             'detail' => "足を組んでお尻の筋肉を伸ばす",
         ]);
 
+        Task::create([
+            'user_id' => 1,
+            'title' => "朝ご飯にプロテインの摂取",
+            'category' => '健康',
+            'type' => '個人',
+            'important' => 3,
+            'status' => '完了',
+            'deadline' => now(),
+            'repeat' => null,
+            'score' => 30,
+            'detail' => "水と豆乳で飲む",
+            'completed_by' => 1
+        ]);
+
         //個人タスク2
         Task::create([
             'user_id' => 2,
@@ -64,6 +78,20 @@ class TaskSeeder extends Seeder
             'repeat' => null,
             'score' => 16,
             'detail' => "雨の日は、自重トレーニング",
+        ]);
+
+        Task::create([
+            'user_id' => 2,
+            'title' => "ポケポケパック開封",
+            'category' => '趣味',
+            'type' => '個人',
+            'important' => 1,
+            'status' => '完了',
+            'deadline' => now(),
+            'repeat' => null,
+            'score' => 4,
+            'detail' => "雨の日は、自重トレーニング",
+            'completed_by' => 2
         ]);
 
         //----------
