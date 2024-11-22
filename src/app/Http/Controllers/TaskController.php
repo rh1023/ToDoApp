@@ -73,7 +73,7 @@ class TaskController extends Controller
         // バリデーション
         $request->validate(
             [
-                'title' => 'required|string|max:255',
+                'title' => 'required|string|max:20',
                 'category' => 'required|string|max:255',
                 'important' => 'required|integer|min:1|max:5',
                 'deadline' => 'nullable|date',
@@ -164,7 +164,7 @@ class TaskController extends Controller
         $userId = Auth::id();
 
         $request->validate([
-            'title' => 'required|string|max:255',
+            'title' => 'required|string|max:20',
             'category' => 'required|string|max:255',
             'important' => 'required|integer|min:1|max:5',
             'deadline' => 'nullable|date',

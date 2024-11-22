@@ -18,19 +18,25 @@ class UserSeeder extends Seeder
 
         User::create([
             'name' => '坪石',
-            'email' => 'tubo@test.com',
+            'email' => 'tsuboishi@test.com',
             'password' => Hash::make('password'),
         ]);
 
         User::create([
-            'name' => '太郎',
-            'email' => 'taro@test.com',
+            'name' => '二村',
+            'email' => 'futamura@test.com',
             'password' => Hash::make('password'),
         ]);
 
         User::create([
-            'name' => '次郎',
-            'email' => 'jiro@test.com',
+            'name' => '山田',
+            'email' => 'yamada@test.com',
+            'password' => Hash::make('password'),
+        ]);
+
+        User::create([
+            'name' => '古川',
+            'email' => 'furukawa@test.com',
             'password' => Hash::make('password'),
         ]);
     }

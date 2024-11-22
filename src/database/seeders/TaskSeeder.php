@@ -12,10 +12,24 @@ class TaskSeeder extends Seeder
     {
         $users = User::all();
 
-        //個人タスク1
+        // 個人タスク1
         Task::create([
             'user_id' => 1,
-            'title' => "椎間板ヘルニア対策ストレッチ",
+            'title' => "健康診断",
+            'category' => '健康',
+            'type' => '個人',
+            'important' => 5,
+            'status' => '未着手',
+            'deadline' => now()->addDays(rand(1, 30)),
+            'repeat' => null,
+            'score' => 50,
+            'detail' => "○○名古屋院：10:00～",
+        ]);
+
+
+        Task::create([
+            'user_id' => 1,
+            'title' => "腰痛対策ストレッチ",
             'category' => '健康',
             'type' => '個人',
             'important' => 3,
@@ -28,7 +42,7 @@ class TaskSeeder extends Seeder
 
         Task::create([
             'user_id' => 1,
-            'title' => "椎間板ヘルニア対策ストレッチ",
+            'title' => "腰痛対策ストレッチ",
             'category' => '健康',
             'type' => '個人',
             'important' => 3,
@@ -53,10 +67,10 @@ class TaskSeeder extends Seeder
             'completed_by' => 1
         ]);
 
-        //個人タスク2
+        // 個人タスク2
         Task::create([
             'user_id' => 2,
-            'title' => "ウォーキング：3000歩",
+            'title' => "夜更かしせず、早寝をする",
             'category' => '健康',
             'type' => '個人',
             'important' => 3,
@@ -64,7 +78,7 @@ class TaskSeeder extends Seeder
             'deadline' => now(),
             'repeat' => null,
             'score' => 30,
-            'detail' => "職場から自宅まで徒歩で帰宅",
+            'detail' => "日付変わる前には就寝",
         ]);
 
         Task::create([
@@ -82,7 +96,7 @@ class TaskSeeder extends Seeder
 
         Task::create([
             'user_id' => 2,
-            'title' => "ポケポケパック開封",
+            'title' => "カードゲームパック開封",
             'category' => '趣味',
             'type' => '個人',
             'important' => 1,
@@ -94,13 +108,97 @@ class TaskSeeder extends Seeder
             'completed_by' => 2
         ]);
 
+        // 個人タスク3
+        Task::create([
+            'user_id' => 3,
+            'title' => "祖母への編み物",
+            'category' => '趣味',
+            'type' => '個人',
+            'important' => 3,
+            'status' => '未着手',
+            'deadline' => now(),
+            'repeat' => null,
+            'score' => 12,
+            'detail' => "マフラー制作",
+        ]);
+
+        Task::create([
+            'user_id' => 3,
+            'title' => "ビールを５杯以内に抑える",
+            'category' => '健康',
+            'type' => '個人',
+            'important' => 5,
+            'status' => '完了',
+            'deadline' => now(),
+            'repeat' => null,
+            'score' => 50,
+            'detail' => "名古屋駅周辺での飲み会",
+            'completed_by' => 3
+        ]);
+
+        // 個人タスク4
+        Task::create([
+            'user_id' => 4,
+            'title' => "ジムで筋トレ",
+            'category' => '健康',
+            'type' => '個人',
+            'important' => 3,
+            'status' => '未着手',
+            'deadline' => now(),
+            'repeat' => null,
+            'score' => 30,
+            'detail' => "体幹トレーニング4セット",
+        ]);
+
+        Task::create([
+            'user_id' => 4,
+            'title' => "ジムで筋トレ",
+            'category' => '健康',
+            'type' => '個人',
+            'important' => 3,
+            'status' => '完了',
+            'deadline' => now(),
+            'repeat' => null,
+            'score' => 30,
+            'detail' => "胸筋を中心に行う",
+            'completed_by' => 4
+        ]);
+
+        // 個人タスク5
+        Task::create([
+            'user_id' => 5,
+            'title' => "引っ越しをする",
+            'category' => 'その他',
+            'type' => '個人',
+            'important' => 5,
+            'status' => '未着手',
+            'deadline' => now(),
+            'repeat' => null,
+            'score' => 20,
+            'detail' => "名古屋市内に引っ越す",
+        ]);
+
+        Task::create([
+            'user_id' => 5,
+            'title' => "不動産に相談しにいく",
+            'category' => 'その他',
+            'type' => '個人',
+            'important' => 5,
+            'status' => '完了',
+            'deadline' => now(),
+            'repeat' => null,
+            'score' => 20,
+            'detail' => "胸筋を中心に行う",
+            'completed_by' => 5
+        ]);
+
         //----------
 
         // 共有タスク
         for ($i = 1; $i <= 1; $i++) {
             $task = Task::create([
                 'user_id' => 1,
-                'title' => "自作ToDoアプリ成果発表会",
+                'title' => "アンケートの回答依頼",
                 'category' => '仕事',
                 'type' => '共有',
                 'important' => 5,
@@ -108,7 +206,7 @@ class TaskSeeder extends Seeder
                 'deadline' => now(),
                 'repeat' => null,
                 'score' => 30,
-                'detail' => "発表時間は、10分間",
+                'detail' => "仕事後の飲み会の日程について",
             ]);
 
             // 共有タスクの場合は全ユーザーを関連付ける
@@ -123,7 +221,7 @@ class TaskSeeder extends Seeder
         // 任意タスク
         Task::create([
             'user_id' => 1,
-            'title' => "プレゼン資料作成：テスト様",
+            'title' => "プレゼンテーション資料作成",
             'category' => '仕事',
             'type' => '任意',
             'important' => 5,
@@ -131,19 +229,6 @@ class TaskSeeder extends Seeder
             'deadline' => now()->addDays(rand(1, 30)),
             'repeat' => null,
             'score' => 45,
-            'detail' => "",
-        ]);
-
-        Task::create([
-            'user_id' => 1,
-            'title' => "エアコンのフィルター掃除",
-            'category' => '家事',
-            'type' => '任意',
-            'important' => 3,
-            'status' => '未着手',
-            'deadline' => now()->addDays(rand(1, 30)),
-            'repeat' => null,
-            'score' => 36,
             'detail' => "",
         ]);
     }
